@@ -1,9 +1,9 @@
 #!/bin/bash
 
-INPUT_BAM_DIR="/farmshare/user_data/gday/igFinder"
-OUTPUT_BAM_DIR="/farmshare/user_data/gday/igFinder"
+INPUT_BAM_DIR=$BAM
+OUTPUT_BAM_DIR="$STAFF"
 
-for FILE in $INPUT_BAM_DIR/s_28019.bam; do
+for FILE in $INPUT_BAM_DIR/s_28242.bam; do
     FILENAME="${FILE##*/}"
     FILENAME="${FILENAME%.*}"
     DIR="$OUTPUT_BAM_DIR/${FILENAME}"
@@ -26,13 +26,12 @@ for FILE in $INPUT_BAM_DIR/s_28019.bam; do
 
     mkdir $OUT
     
-    qsub -v DIR=$DIR,IGDATA=$IGDATA,FILE=$FILE,OUT=$OUT,FILENAME=$FILENAME,PERL5LIB=/farmshare/user_data/gday/bin/perl5:$PERL5LIB,VELVETOPTIMISER=/farmshare/user_data/gday/VelvetOptimiser-2.2.5/VelvetOptimiser.pl \
+    qsub -v DIR=$DIR,FILE=$FILE,OUT=$OUT,FILENAME=$FILENAME \
     -N ${FILENAME}_igFinder \
     -o {OUT}/igFinder_${FILENAME}.output.txt \
     -wd $OUT \
-    -pe shm 32 \
-    -l large=1 \
-    /farmshare/user_data/gday/scripts/igFinder_master.sh
+    -pe threaded 16 \
+     $STAFF/igFinder/igFinder_master.sh
     
     
     
