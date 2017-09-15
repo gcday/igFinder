@@ -30,7 +30,7 @@ for FILE in $INPUT_BAM_DIR/s_28242.bam; do
     -N ${FILENAME}_igFinder \
     -o {OUT}/igFinder_${FILENAME}.output.txt \
     -wd $OUT \
-    -pe threaded 16 \
+    -pe threaded 4 \
      $STAFF/igFinder/igFinder_master.sh
     
     
