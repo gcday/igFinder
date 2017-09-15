@@ -2,7 +2,6 @@
 
 # requirements: mixcr must be in your $PATH
 #               $VELVETOPTIMISER must point to VelvetOptimiser.pl (tested with 2.2.5)
-#               
 
 namesort_bam="$DIR/${FILENAME}.namesorted.bam"
 
@@ -49,7 +48,7 @@ else
     
     
     
-    mixcr align -t $cores -g -a -f -p rna-seq -s hsa \
+    $MIXCR align -t $cores -g -a -f -p rna-seq -s hsa \
     -OvParameters.geneFeatureToAlign=VGeneWithP \
     -OallowPartialAlignments=true \
     "$input_fastq_1" \
@@ -78,9 +77,9 @@ mixcr_index="${OUT}/${FILENAME}_reads_by_clone.index"
 clns_file="${OUT}/${FILENAME}_clones.clns"
 clns_txt="${clns_file}.txt"
 
-mixcr assemble -f -i $mixcr_index $vdjca_file $clns_file
+$MIXCR assemble -f -i $mixcr_index $vdjca_file $clns_file
 
-mixcr exportClones -cloneId -count -fraction -vGene -dGene -jGene \
+$MIXCR exportClones -cloneId -count -fraction -vGene -dGene -jGene \
 -aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents  \
 -jBestIdentityPercent -jIdentityPercents -nFeature CDR3 \
 -avrgFeatureQuality CDR3 -minFeatureQuality CDR3 \
@@ -105,7 +104,7 @@ touch "$VDJ_seqs"
 for X in "${sig_clones[@]}"; do
     echo "processing clone $X"
     mkdir ${OUT}/vOpt_temp/${X}
-    mixcr exportReadsForClones $mixcr_index vdjca_file ${X} ${OUT}/reads.fastq
+    $MIXCR exportReadsForClones $mixcr_index vdjca_file ${X} ${OUT}/reads.fastq
     cd ${OUT}/vOpt_temp/${X}
     
     $VELVETOPTIMISER -v -s 51 -e 151 -x 4 -t 8 -c n50*tbp \
