@@ -15,23 +15,23 @@ for FILE in $INPUT_BAM_DIR/s_28242.bam; do
     fi
     OUT="$DIR/mixcr_out"
     
-#     if [[ -d "$OUT" ]]; then
-#         echo "${OUT} exists; moving useful files before deleting"
-#         if [[ -e "${DIR}/${FILENAME}_mixcr_out_rna_aligned.vdjca" ]]; then
-#             echo "alignments already done"
-#             mv "${DIR}/${FILENAME}_mixcr_out_rna_aligned.vdjca" "${DIR}"
-#         fi
-#         rm -r $OUT
-#     fi
+    if [[ -d "$OUT" ]]; then
+        echo "${OUT} exists; moving useful files before deleting"
+        if [[ -e "${DIR}/${FILENAME}_mixcr_out_rna_aligned.vdjca" ]]; then
+            echo "alignments already done"
+            mv "${DIR}/${FILENAME}_mixcr_out_rna_aligned.vdjca" "${DIR}"
+        fi
+        rm -r $OUT
+    fi
 
-#     mkdir $OUT
+    mkdir $OUT
     
-#     qsub -v DIR=$DIR,FILE=$FILE,OUT=$OUT,FILENAME=$FILENAME \
-#     -N ${FILENAME}_igFinder \
-#     -o {OUT}/igFinder_${FILENAME}.output.txt \
-#     -wd $OUT \
-#     -pe threaded 16 \
-#      $STAFF/igFinder/igFinder_master.sh
+    qsub -v DIR=$DIR,FILE=$FILE,OUT=$OUT,FILENAME=$FILENAME \
+    -N ${FILENAME}_igFinder \
+    -o {OUT}/igFinder_${FILENAME}.output.txt \
+    -wd $OUT \
+    -pe threaded 16 \
+     $STAFF/igFinder/igFinder_master.sh
     
     
     
