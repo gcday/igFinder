@@ -26,9 +26,10 @@ for FILE in $INPUT_BAM_DIR/s_28242.bam; do
 
     mkdir $OUT
     
+    
     qsub -v DIR=$DIR,FILE=$FILE,OUT=$OUT,FILENAME=$FILENAME \
     -N ${FILENAME}_igFinder \
-    -o {OUT}/igFinder_${FILENAME}.output.txt \
+    -o ${OUT}/igFinder_${FILENAME}.output.txt \
     -wd $OUT \
     -pe threaded 4 \
      $STAFF/igFinder/igFinder_master.sh
