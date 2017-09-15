@@ -18,6 +18,8 @@ VDJ_seqs="${OUT}/${FILENAME}_VDJ_seqs.fa"
 cores=`nproc` # default behavior: use all available cores for
               # multithreaded applications
 
+$MIXCR
+
 if [[ -e "$vdjca_file" ]]; then
     echo "moving straight to mixcr assembly step"
         
