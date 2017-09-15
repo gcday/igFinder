@@ -19,7 +19,7 @@ cores=`nproc` # default behavior: use all available cores for
               # multithreaded applications
 echo $namesort_bam
 
-$MIXCR
+mixcr
 
 if [[ -e "$vdjca_file" ]]; then
     echo "moving straight to mixcr assembly step"
@@ -51,7 +51,7 @@ else
     
     
     
-    $MIXCR align -t $cores -g -a -f -p rna-seq -s hsa \
+    mixcr align -t $cores -g -a -f -p rna-seq -s hsa \
     -OvParameters.geneFeatureToAlign=VGeneWithP \
     -OallowPartialAlignments=true \
     "$input_fastq_1" \
@@ -80,9 +80,9 @@ mixcr_index="${OUT}/${FILENAME}_reads_by_clone.index"
 clns_file="${OUT}/${FILENAME}_clones.clns"
 clns_txt="${clns_file}.txt"
 
-$MIXCR assemble -f -i $mixcr_index $vdjca_file $clns_file
+mixcr assemble -f -i $mixcr_index $vdjca_file $clns_file
 
-$MIXCR exportClones -cloneId -count -fraction -vGene -dGene -jGene \
+mixcr exportClones -cloneId -count -fraction -vGene -dGene -jGene \
 -aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents  \
 -jBestIdentityPercent -jIdentityPercents -nFeature CDR3 \
 -avrgFeatureQuality CDR3 -minFeatureQuality CDR3 \
