@@ -1,0 +1,31 @@
+{
+    "__default__" :
+    {
+        "account" : "gday",
+        "time" : "01:30:00",
+        "n" : 16,
+        "partition" : "core",
+        "mem" : 16000,
+        "job-name" : "{rule}.{wildcards}",
+        "output"    : "logs/cluster/{rule}.{wildcards}.out",
+        "error"     : "logs/cluster/{rule}.{wildcards}.err"
+    },
+    "mixcr_assemble" :
+    {
+        "time" : "00:30:00",
+        "n" : 1,
+        "mem" : 8000
+    },
+    "mixcr_export" :
+    {
+        "time" : "00:30:00",
+        "n" : 1,
+        "mem" : 8000
+    },
+    "report" :
+    {
+        "time" : "00:30:00",
+        "n" : 1,
+        "mem" : 8000
+    }
+}
