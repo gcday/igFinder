@@ -1,3 +1,6 @@
+import pandas as pd
+SHORT_SAMPLES = ["s_27779"]
+
 SAMPLES = ["s_27779", "s_27780", "s_27817", "s_27818", "s_28016", "s_28017", "s_28019", "s_28240", "s_28242", "s_28243", "s_28246",
            "s_28248", "s_28249", "s_28251", "s_28253", "s_28255", "s_28257", "s_28259", "s_28261", "s_28262", "s_28264", "s_28459", 
            "s_28460", "s_28461", "s_28462", "s_28465", "s_28466", "s_28471", "s_28472", "s_28473", "s_28803", "s_28804", "s_28805", 
@@ -12,24 +15,62 @@ SAMPLES = ["s_27779", "s_27780", "s_27817", "s_27818", "s_28016", "s_28017", "s_
            "s_29198", "s_29199", "s_29200", "s_29201", "s_29202", "s_29203", "s_29204", "s_29208", "s_29210", "s_29212", "s_29215", 
            "s_29216", "s_29217", "s_29218", "s_29219", "s_29227", "s_29228", "s_GM15510-1", "s_GM15510-2", "s_GM15510-3", "s_GM15510-4", 
            "s_GM19240-1", "s_GM19240-2", "s_GM19240-3", "s_MC1286PE1", "s_MC1286PE2", "s_MC1286PE3", "s_MC1286PE5", "s_MC1286PE7"]
+WORKFLOW = workflow.basedir
 
-rule all:
+configfile: "config.yaml"
+
+samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
+print(samples["sample"])
+rule def_all:
     input:
-        "report.html"
+        expand("filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=samples["sample"]) #, workflow=workflow.basedir)
+
+# singularity: "docker://gcday/igfinder:1.0"
+singularity: "docker://gcday/igfinder-1.0"
+# rule samtools_namesort_fastq:
+#     input:
+#         "data/bam_files/{sample}.bam"
+#     output:
+#         one=temp("data/fastq/{sample}_1.fastq"),
+#         two=temp("data/fastq/{sample}_2.fastq"),
+#         singleton=temp("data/fastq/{sample}_singleton.fastq")
+#     threads: 16
+#     shell:
+#         "samtools sort -n -m 2000M -@ {threads} {input} " 
+#         "| samtools fastq -N -@ {threads} "
+#         "-1 {output.one} -2 {output.two} -0 {output.singleton} -"
+        # ig_bed="Ig_exons.sorted.extended300.merged.bed"
+        # bam="data/bam_files/{sample}.bam",
+
+def get_bam(wildcards):
+    return samples.loc[(wildcards.sample), ["bam"]].dropna()
+
+rule samtools_filter:
+    input:
+        bam=get_bam,
+        ig_bed="data/reference/Ig_exons.sorted.extended300.merged.bed"
+    output:
+        merged=temp("data/filtered_bam/{sample}.bam"),
+        temp1=temp("data/filtered_bam/temp_1{sample}.bam"),
+        temp2=temp("data/filtered_bam/temp_2{sample}.bam")
+    threads: 16
+    shell:
+        "samtools view -uh -@ {threads} -f 13 {input.bam} | samtools sort -@ {threads} -o {output.temp1} &&"
+        "samtools view -uh -@ {threads} -f 1 -M -L {input.ig_bed} {input.bam} | samtools sort -@ {threads} -o {output.temp2} &&"
+        "samtools merge {output.merged} {output.temp1} {output.temp2} "
 
 rule samtools_sort:
     input:
-        "data/mapped_reads/{sample}.bam"
+        rules.samtools_filter.output.merged
     output:
-        temp("data/namesorted_reads/{sample}.bam")
+        temp("data/filtered_namesorted_reads/{sample}.bam")
     threads: 16
     shell:
-        "samtools sort -n "
-        "-@ {threads} -o {output} {input}"
+        "samtools sort -t /tmp -n -m 3000M -@ {threads} -o {output} {input}"
 
 rule samtools_fastq:
     input:
-        "data/namesorted_reads/{sample}.bam"
+        rules.samtools_sort.output
     output:
         one=temp("data/fastq/{sample}_1.fastq"),
         two=temp("data/fastq/{sample}_2.fastq"),
@@ -37,15 +78,15 @@ rule samtools_fastq:
     threads: 16
     shell:
         "samtools fastq -N -@ {threads} "
-        "-1 {output.one} -2 {output.two} -0 {output.singleton} {input}"
+        "-1 {output.one} -2 {output.two} -s {output.singleton} {input}"
 
 
 rule mixcr_align:
     input:
-        "data/fastq/{sample}_1.fastq",
-        "data/fastq/{sample}_2.fastq"
+        rules.samtools_fastq.output.one,
+        rules.samtools_fastq.output.two
     output:
-        "data/mixcr/aligned/{sample}.vdjca"
+        "filtered_data/mixcr/aligned/{sample}.vdjca"
     threads: 16
     shell: 
         "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
@@ -55,21 +96,18 @@ rule mixcr_align:
 
 rule mixcr_assemble:
     input:
-        "data/mixcr/aligned/{sample}.vdjca"
+        rules.mixcr_align.output
     output:
         index="data/mixcr/index/{sample}.index",
         clones="data/mixcr/clones/{sample}.clns"
     shell: 
         "mixcr assemble -f -i {output.index} {input} {output.clones}"
 
-
-
-
 rule mixcr_export:
     input:
-        "data/mixcr/clones/{sample}.clns"
+        rules.mixcr_assemble.output.clones
     output:
-        "data/mixcr/clones/{sample}.txt"
+        "filtered_data/mixcr/clones/{sample}.txt"
     shell:
         "mixcr exportClones -cloneId -count -fraction -vGene -dGene -jGene "
         "-aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents "
@@ -77,44 +115,37 @@ rule mixcr_export:
         "-avrgFeatureQuality CDR3 -minFeatureQuality CDR3 "
         "{input} {output}"
 
-
-
-
-
 rule mixcr_export_sig_clones:
     input:
-        "data/mixcr/clones/{sample}.txt",
-        "data/mixcr/aligned/{sample}.vdjca",
-        "data/mixcr/index/{sample}.index"
+        rules.mixcr_export.output,
+        rules.mixcr_align.output,
+        rules.mixcr_assemble.output.index
     output:
-        "tmp/mixcr/{sample}",
-        "results/mixcr/vdj_seqs/{sample}.vdj.fa"
+        "ftmp/mixcr/{sample}",
+        "filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa"
     threads: 16
     shell:
         "scripts/assemble_clones.sh {input} {output} {threads} {wildcards.sample}"
 
+# rule report:
+#     input:
+#         clones=expand("results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=SAMPLES)
+#     output:
+#         "report.html"
+#     run:
+#         from snakemake.utils import report
+#         n_clones = 0;
+#         for clones in map(open, input.clones):
+#             n_clones += sum(1 for line in clones) - 1
+#         report("""
+#         An example variant calling workflow
+#         ===================================
 
+#         Reads were mapped to the Yeast
+#         reference genome and variants were called jointly with
+#         SAMtools/BCFtools.
 
-
-rule report:
-    input:
-        clones=expand("results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=SAMPLES)
-    output:
-        "report.html"
-    run:
-        from snakemake.utils import report
-        n_clones = 0;
-        for clones in map(open, input.clones):
-            n_clones += sum(1 for line in clones) - 1
-        report("""
-        An example variant calling workflow
-        ===================================
-
-        Reads were mapped to the Yeast
-        reference genome and variants were called jointly with
-        SAMtools/BCFtools.
-
-        This resulted in {n_clones} variants (see Table T1_).
-        """, output[0], T1=input[0])
+#         This resulted in {n_clones} variants (see Table T1_).
+#         """, output[0], T1=input[0])
 
 

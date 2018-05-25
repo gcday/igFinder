@@ -2,27 +2,42 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "04:00:00",
-        "n" : 16,
-        "partition" : "core",
-        "mem" : 16000,
+        "time" : "08:00:00",
+        "c" : 12,
+        "partition" : "normal",
+        "mem-per-cpu" : 3000,
         "job-name" : "{rule}.{wildcards}",
         "output"    : "logs/cluster/{rule}.{wildcards}.out",
         "error"     : "logs/cluster/{rule}.{wildcards}.err"
     },
+    "cnvkit_segment" :
+    {
+        "c" : 8,
+        "mem-per-cpu" : 4000
+    },
+    "mutect" :
+    {
+        "c" : 1,
+        "mem-per-cpu" : 4000
+    },
+    "samtools_sort" :
+    {
+        "c" : 16,
+        "mem-per-cpu" : 4000
+    },
+    "samtools_fastq" :
+    {
+        "c" : 16,
+        "mem-per-cpu" : 1000
+    },
     "mixcr_assemble" :
     {
-        "n" : 1,
-        "mem" : 8000
+        "c" : 1,
+        "mem-per-cpu" : 8000
     },
     "mixcr_export" :
     {
-        "n" : 1,
-        "mem" : 8000
+        "c" : 1,
+        "mem-per-cpu" : 8000
     },
-    "report" :
-    {
-        "n" : 1,
-        "mem" : 8000
-    }
 }

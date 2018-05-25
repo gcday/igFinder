@@ -40,7 +40,8 @@ for X in "${sig_clones[@]}"; do
     mixcr exportReadsForClones $mixcr_index $vdjca_file ${X} ${OUT}/reads.fastq
     cd ${OUT}/vOpt_temp/${X}
     
-    $VELVETOPTIMISER -v -s 51 -e 151 -x 4 -t $threads -c n50*tbp \
+    # $VELVETOPTIMISER -v -s 51 -e 151 -x 4 -t $threads -c n50*tbp \
+    VelvetOptimiser.pl -v -s 51 -e 151 -x 4 -t $threads -c n50*tbp \
     -k n50*tbp -a -d ${OUT}/cln_${X}_vOptOut   \
     -f " -fastq -shortPaired -separate ${OUT}/reads_cln${X}_R1.fastq ${OUT}/reads_cln${X}_R2.fastq "
     
