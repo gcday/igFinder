@@ -20,115 +20,20 @@ import pandas as pd
 configfile: "config.yaml"
 
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
-print(samples["sample"])
 
 rule def_all:
     input:
         expand("filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=samples["sample"]) #, workflow=workflow.basedir)
 
-
-singularity: "docker://gcday/igfinder-1.0"
-
-# singularity: "docker://gcday/igfinder:1.0"
-# rule samtools_namesort_fastq:
-#     input:
-#         "data/bam_files/{sample}.bam"
-#     output:
-#         one=temp("data/fastq/{sample}_1.fastq"),
-#         two=temp("data/fastq/{sample}_2.fastq"),
-#         singleton=temp("data/fastq/{sample}_singleton.fastq")
-#     threads: 16
-#     shell:
-#         "samtools sort -n -m 2000M -@ {threads} {input} " 
-#         "| samtools fastq -N -@ {threads} "
-#         "-1 {output.one} -2 {output.two} -0 {output.singleton} -"
-        # ig_bed="Ig_exons.sorted.extended300.merged.bed"
-        # bam="data/bam_files/{sample}.bam",
-
-def get_bam(wildcards):
-    return samples.loc[(wildcards.sample), ["bam"]].dropna()
-
-rule samtools_filter:
-    input:
-        bam=get_bam,
-        ig_bed=config["ig_bed"]
-    output:
-        merged=temp("data/filtered_bam/{sample}.bam"),
-        temp1=temp("data/filtered_bam/temp_1{sample}.bam"),
-        temp2=temp("data/filtered_bam/temp_2{sample}.bam")
-    threads: 16
-    shell:
-        "samtools view -uh -@ {threads} -f 13 {input.bam} | samtools sort -@ {threads} -o {output.temp1} &&"
-        "samtools view -uh -@ {threads} -f 1 -M -L {input.ig_bed} {input.bam} | samtools sort -@ {threads} -o {output.temp2} &&"
-        "samtools merge {output.merged} {output.temp1} {output.temp2} "
-
-rule samtools_sort:
-    input:
-        rules.samtools_filter.output.merged
-    output:
-        temp("data/filtered_namesorted_reads/{sample}.bam")
-    threads: 16
-    shell:
-        "samtools sort -t /tmp -n -m 2000M -@ {threads} -o {output} {input}"
-
-rule samtools_fastq:
-    input:
-        rules.samtools_sort.output
-    output:
-        one=temp("data/fastq/{sample}_1.fastq"),
-        two=temp("data/fastq/{sample}_2.fastq"),
-        singleton=temp("data/fastq/{sample}_singleton.fastq")
-    threads: 16
-    shell:
-        "samtools fastq -N -@ {threads} "
-        "-1 {output.one} -2 {output.two} -s {output.singleton} {input}"
+singularity: "docker://gcday/igfinder:1.0"
 
 
-rule mixcr_align:
-    input:
-        rules.samtools_fastq.output.one,
-        rules.samtools_fastq.output.two
-    output:
-        "filtered_data/mixcr/aligned/{sample}.vdjca"
-    threads: 16
-    shell: 
-        "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
-        "-OvParameters.geneFeatureToAlign=VGeneWithP "
-        "-OallowPartialAlignments=true "
-        "{input} {output}"
+include: "rules/samtools_filtering.smk"
+include: "rules/mixcr.smk"
 
-rule mixcr_assemble:
-    input:
-        rules.mixcr_align.output
-    output:
-        index="data/mixcr/index/{sample}.index",
-        clones="data/mixcr/clones/{sample}.clns"
-    shell: 
-        "mixcr assemble -f -i {output.index} {input} {output.clones}"
 
-rule mixcr_export:
-    input:
-        rules.mixcr_assemble.output.clones
-    output:
-        "filtered_data/mixcr/clones/{sample}.txt"
-    shell:
-        "mixcr exportClones -cloneId -count -fraction -vGene -dGene -jGene "
-        "-aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents "
-        "-jBestIdentityPercent -jIdentityPercents -nFeature CDR3 "
-        "-avrgFeatureQuality CDR3 -minFeatureQuality CDR3 "
-        "{input} {output}"
 
-rule mixcr_export_sig_clones:
-    input:
-        rules.mixcr_export.output,
-        rules.mixcr_align.output,
-        rules.mixcr_assemble.output.index
-    output:
-        "ftmp/mixcr/{sample}",
-        "filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa"
-    threads: 16
-    shell:
-        "scripts/assemble_clones.sh {input} {output} {threads} {wildcards.sample}"
+
 
 # rule report:
 #     input:
