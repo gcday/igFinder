@@ -22,12 +22,12 @@
     },
     "samtools_sort" :
     {
-        "c" : 16,
-        "mem-per-cpu" : 4000
+        "c" : 12,
+        "mem-per-cpu" : 3000
     },
     "samtools_fastq" :
     {
-        "c" : 16,
+        "c" : 12,
         "mem-per-cpu" : 1000
     },
     "mixcr_assemble" :

@@ -1,5 +1,5 @@
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
-samples: samples_desktop.tsv
+samples: samples.tsv
 
 ig_bed: Ig_exons.sorted.extended300.merged.bed
 
