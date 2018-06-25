@@ -7,8 +7,10 @@ rule samtools_filter:
         ig_bed=config["ig_bed"]
     output:
         merged=temp("data/filtered_bam/{sample}.bam"),
-        temp1=temp("data/filtered_bam/temp_1{sample}.bam"),
-        temp2=temp("data/filtered_bam/temp_2{sample}.bam")
+        temp1=temp("data/filtered_bam/temp_1_{sample}.bam"),
+        temp2=temp("data/filtered_bam/temp_2_{sample}.bam")
+    log:
+        "logs/samtools_filter/{sample}.log"
     threads: 16
     shell:
         "samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam}  && "
@@ -24,6 +26,8 @@ rule samtools_sort:
         "data/filtered_bam/{sample}.bam"
     output:
         temp("data/filtered_namesorted_reads/{sample}.bam")
+    log:
+        "logs/samtools_sort/{sample}.log"
     threads: 16
     shell:
         "samtools sort -t /tmp -n -m 2000M -@ {threads} -o {output} {input}"
@@ -35,6 +39,8 @@ rule samtools_fastq:
         one=temp("data/fastq/{sample}_1.fastq"),
         two=temp("data/fastq/{sample}_2.fastq"),
         singleton=temp("data/fastq/{sample}_singleton.fastq")
+    log:
+        "logs/samtools_fastq/{sample}.log"
     threads: 16
     shell:
         "samtools fastq -N -@ {threads} "

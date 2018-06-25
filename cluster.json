@@ -3,16 +3,16 @@
     {
         "account" : "gday",
         "time" : "08:00:00",
-        "c" : 12,
+        "c" : 4,
         "partition" : "normal",
         "mem-per-cpu" : 3000,
         "job-name" : "{rule}.{wildcards}",
-        "output"    : "logs/cluster/{rule}.{wildcards}.out",
-        "error"     : "logs/cluster/{rule}.{wildcards}.err"
+        "output" : "{log}.cluster",
+        "error" : "{log}.cluster"
     },
     "cnvkit_segment" :
     {
-        "c" : 8,
+        "c" : 4,
         "mem-per-cpu" : 4000
     },
     "mutect" :
@@ -22,12 +22,12 @@
     },
     "samtools_sort" :
     {
-        "c" : 12,
+        "c" : 4,
         "mem-per-cpu" : 3000
     },
     "samtools_fastq" :
     {
-        "c" : 12,
+        "c" : 4,
         "mem-per-cpu" : 1000
     },
     "mixcr_assemble" :
