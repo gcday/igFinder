@@ -1,2 +1,2 @@
 Bootstrap: docker
-From: gcday/igFinder:1.0
+From: gcday/igFinder
