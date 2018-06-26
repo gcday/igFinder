@@ -7,6 +7,7 @@ rule mixcr_align:
     output:
         "filtered_data/mixcr/aligned/{sample}.vdjca"
     threads: 16
+    group: "mixcr"
     shell: 
         "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
         "-OvParameters.geneFeatureToAlign=VGeneWithP "
@@ -21,6 +22,7 @@ rule mixcr_assemble:
         clones="data/mixcr/clones/{sample}.clns"
     log:
         "logs/mixcr_assemble/{sample}.log"
+    group: "mixcr"
     shell: 
         "mixcr assemble -f -i {output.index} {input} {output.clones}"
 
@@ -32,6 +34,7 @@ rule mixcr_export:
         full="filtered_data/mixcr/full_clones/{sample}_full_clones.txt"
     log:
         "logs/mixcr_export/{sample}.log"
+    group: "mixcr"
     shell:
         "mixcr exportClones -cloneId -count -fraction -vGene -dGene -jGene "
         "-aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents "
@@ -51,5 +54,6 @@ rule mixcr_export_sig_clones:
         "ftmp/mixcr/{sample}",
         "filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa"
     threads: 16
+    group: "mixcr"
     shell:
         "scripts/assemble_clones.sh {input} {output} {threads} {wildcards.sample}"

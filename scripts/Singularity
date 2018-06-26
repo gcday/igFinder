@@ -1,2 +1,13 @@
 Bootstrap: docker
-From: gcday/igFinder
+From: linuxbrew/linuxbrew
+
+
+%setup
+  brew install samtools
+  
+  brew tap milaboratory/all
+  brew install mixcr
+
+  brew tap brewsci/bio
+  brew tap brewsci/science
+  brew install VelvetOptimiser

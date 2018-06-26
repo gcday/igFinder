@@ -5,8 +5,10 @@ gm_mean = function(x, na.rm=TRUE){
   exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
 }
 
-cc <- read_delim(snakemake@input[[1]], '\t')
+cc <- read.table(snakemake@input[[1]], sep='\t', header=TRUE, fill=TRUE)
 
+
+cc[is.na(cc)] <- 0
 
 cc_avg <- select(cc, sample, cloneFraction, cloneCount) %>% 
   group_by(sample) %>% 

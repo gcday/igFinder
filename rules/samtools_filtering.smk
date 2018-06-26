@@ -12,14 +12,11 @@ rule samtools_filter:
     log:
         "logs/samtools_filter/{sample}.log"
     threads: 16
+    group: "samtools"
     shell:
         "samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam}  && "
         "samtools view -uh -@ {threads} -f 1 -M -L {input.ig_bed} -o {output.temp2} {input.bam} && "
         "samtools merge {output.merged} {output.temp1} {output.temp2} "
-
-        # "samtools view -uh -@ {threads} -f 13 {input.bam} | samtools sort -@ {threads} -o {output.temp1} && "
-        # "samtools view -uh -@ {threads} -f 1 -M -L {input.ig_bed} {input.bam} | samtools sort -@ {threads} -o {output.temp2} && "
-        # "samtools merge {output.merged} {output.temp1} {output.temp2} "
 
 rule samtools_sort:
     input:
@@ -29,6 +26,7 @@ rule samtools_sort:
     log:
         "logs/samtools_sort/{sample}.log"
     threads: 16
+    group: "samtools"
     shell:
         "samtools sort -t /tmp -n -m 2000M -@ {threads} -o {output} {input}"
 
@@ -42,6 +40,8 @@ rule samtools_fastq:
     log:
         "logs/samtools_fastq/{sample}.log"
     threads: 16
+    group: "samtools"
     shell:
         "samtools fastq -N -@ {threads} "
-        "-1 {output.one} -2 {output.two} -s {output.singleton} {input}"
+        "-1 {output.one} -2 {output.two} -s {output.singleton} {input} && "
+        "touch {output.singleton}"
