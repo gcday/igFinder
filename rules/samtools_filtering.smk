@@ -1,6 +1,9 @@
 def get_bam(wildcards):
     return samples.loc[(wildcards.sample), ["bam"]].dropna()
 
+
+
+
 rule samtools_filter:
     input:
         bam=get_bam,
@@ -14,7 +17,8 @@ rule samtools_filter:
     threads: 16
     group: "samtools"
     shell:
-        "samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam}  && "
+        "samtools index -@ {threads} {input.bam} && "
+        " samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam}  && "
         "samtools view -uh -@ {threads} -f 1 -M -L {input.ig_bed} -o {output.temp2} {input.bam} && "
         "samtools merge {output.merged} {output.temp1} {output.temp2} "
 

@@ -1,4 +1,4 @@
-library(tidyverse)
+library(dplyr)
 
 
 gm_mean = function(x, na.rm=TRUE){

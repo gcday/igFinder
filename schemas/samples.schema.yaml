@@ -1,0 +1,14 @@
+$schema: "http://json-schema.org/draft-06/schema#"
+
+description: an entry in the sample sheet
+properties:
+  sample:
+    type: string
+    description: sample name/identifier
+  bam:
+    type: string
+    description: path to the bam file containing aligned reads from the given sample
+
+required:
+  - sample
+  - bam

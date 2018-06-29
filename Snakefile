@@ -1,15 +1,18 @@
 import pandas as pd
 
-configfile: "config.yaml"
+from snakemake.utils import validate, min_version
 
+configfile: "config.yaml"
+validate(config, schema="schemas/config.schema.yaml")
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
+validate(samples, schema="schemas/samples.schema.yaml")
 
 rule def_all:
     input:
         config["stats_file"]
         # expand("filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=samples["sample"]) #, workflow=workflow.basedir)
         
-singularity: "igfinder-1.0.simg"
+singularity: "docker://gcday/igFinder"
 
 include: "rules/samtools_filtering.smk"
 include: "rules/mixcr.smk"
