@@ -15,7 +15,7 @@ rule samtools_filter:
     log:
         "logs/samtools_filter/{sample}.log"
     threads: 16
-    group: "samtools"
+    #group: "igFinder"
     shell:
         "samtools index -@ {threads} {input.bam} && "
         " samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam}  && "
@@ -30,7 +30,7 @@ rule samtools_sort:
     log:
         "logs/samtools_sort/{sample}.log"
     threads: 16
-    group: "samtools"
+    #group: "igFinder"
     shell:
         "samtools sort -t /tmp -n -m 2000M -@ {threads} -o {output} {input}"
 
@@ -44,7 +44,7 @@ rule samtools_fastq:
     log:
         "logs/samtools_fastq/{sample}.log"
     threads: 16
-    group: "samtools"
+    #group: "igFinder"
     shell:
         "samtools fastq -N -@ {threads} "
         "-1 {output.one} -2 {output.two} -s {output.singleton} {input} && "
