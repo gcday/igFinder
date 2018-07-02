@@ -1,19 +1,18 @@
 import pandas as pd
 
 from snakemake.utils import validate, min_version
+min_version("5.1.5")
 
 configfile: "config.yaml"
 validate(config, schema="schemas/config.schema.yaml")
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
 validate(samples, schema="schemas/samples.schema.yaml")
-print(samples["bam"])
 
 rule def_all:
     input:
         config["stats_file"]
-        # expand("filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=samples["sample"]) #, workflow=workflow.basedir)
-        
-singularity: "docker://gcday/igFinder"
+        # expand("filtered_results/mixcr/vdj_seqs/{sample}.vdj.fa", 
+        #    sample=samples["sample"]) #, workflow=workflow.basedir)
 
 include: "rules/samtools_filtering.smk"
 include: "rules/mixcr.smk"
@@ -24,7 +23,6 @@ def sample_to_clones():
 rule gather_output:
     input:
         sample_to_clones()
-        # samples = sample_to_clones()
     output:
         config["clones_file"]
     run:
@@ -43,33 +41,10 @@ rule gather_output:
                     for line in clones[1:]:
                         summary.write(files[sample] + "\t" + line)
 rule calc_clonality:
-    conda: "envs/igFinder.yaml"
+    conda: "envs/R.yaml"
     input:
         config["clones_file"]
     output:
         config["stats_file"]    
     script:
         "scripts/calc_clonality.R"
-
-# rule report:
-#     input:
-#         clones=expand("results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=SAMPLES)
-#     output:
-#         "report.html"
-#     run:
-#         from snakemake.utils import report
-#         n_clones = 0;
-#         for clones in map(open, input.clones):
-#             n_clones += sum(1 for line in clones) - 1
-#         report("""
-#         An example variant calling workflow
-#         ===================================
-
-#         Reads were mapped to the Yeast
-#         reference genome and variants were called jointly with
-#         SAMtools/BCFtools.
-
-#         This resulted in {n_clones} variants (see Table T1_).
-#         """, output[0], T1=input[0])
-
-
