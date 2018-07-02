@@ -2,6 +2,7 @@ rule mixcr_align:
     input:
         rules.samtools_fastq.output.one,
         rules.samtools_fastq.output.two
+    conda: "envs/igFinder.yaml"
     log:
         "logs/mixcr_align/{sample}.log"
     output:
@@ -17,6 +18,7 @@ rule mixcr_align:
 rule mixcr_assemble:
     input:
         rules.mixcr_align.output
+    conda: "envs/igFinder.yaml"
     output:
         index="data/mixcr/index/{sample}.index",
         clones="data/mixcr/clones/{sample}.clns"
@@ -29,6 +31,7 @@ rule mixcr_assemble:
 rule mixcr_export:
     input:
         rules.mixcr_assemble.output.clones
+    conda: "envs/igFinder.yaml"
     output:
         short="data/mixcr/clone_summary/{sample}_clone_summary.txt",
         full="data/mixcr/full_clones/{sample}_full_clones.txt"
@@ -48,6 +51,7 @@ rule mixcr_export_sig_clones:
         rules.mixcr_export.output.short,
         rules.mixcr_align.output,
         rules.mixcr_assemble.output.index
+    conda: "envs/igFinder.yaml"
     log:
         "logs/mixcr_export_sig_clones/{sample}.log"
     output:

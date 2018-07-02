@@ -1,7 +1,7 @@
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
-samples: 20180626_samples.tsv
-clones_file: 20180626_custom_capture_clones.tsv
-stats_file: 20180626_custom_capture_stats.tsv
+samples: 20180701_samples.tsv
+clones_file: 20180701_custom_capture_clones.tsv
+stats_file: 20180701_custom_capture_stats.tsv
 
 ig_bed: Ig_exons.sorted.extended300.merged.bed
 

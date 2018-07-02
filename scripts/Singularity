@@ -3,11 +3,11 @@ From: linuxbrew/linuxbrew
 
 
 %setup
-  brew install samtools
+  #sudo apt-get install build-essential curl file git
   
-  brew tap milaboratory/all
-  brew install mixcr
+  exec brew tap milaboratory/all
+  exec brew install mixcr
 
-  brew tap brewsci/bio
-  brew tap brewsci/science
-  brew install VelvetOptimiser
+  exec brew tap brewsci/bio
+  exec brew tap brewsci/science
+  exec brew install VelvetOptimiser

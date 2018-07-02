@@ -8,6 +8,7 @@ rule samtools_filter:
     input:
         bam=get_bam,
         ig_bed=config["ig_bed"]
+    conda: "envs/igFinder.yaml"
     output:
         merged=temp("data/filtered_bam/{sample}.bam"),
         temp1=temp("data/filtered_bam/temp_1_{sample}.bam"),
@@ -25,6 +26,7 @@ rule samtools_filter:
 rule samtools_sort:
     input:
         "data/filtered_bam/{sample}.bam"
+    conda: "envs/igFinder.yaml"
     output:
         temp("data/filtered_namesorted_reads/{sample}.bam")
     log:
@@ -37,6 +39,7 @@ rule samtools_sort:
 rule samtools_fastq:
     input:
         "data/filtered_namesorted_reads/{sample}.bam"
+    conda: "envs/igFinder.yaml"
     output:
         one=temp("data/fastq/{sample}_1.fastq"),
         two=temp("data/fastq/{sample}_2.fastq"),

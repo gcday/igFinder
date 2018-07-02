@@ -6,6 +6,7 @@ configfile: "config.yaml"
 validate(config, schema="schemas/config.schema.yaml")
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
 validate(samples, schema="schemas/samples.schema.yaml")
+print(samples["bam"])
 
 rule def_all:
     input:
@@ -18,7 +19,7 @@ include: "rules/samtools_filtering.smk"
 include: "rules/mixcr.smk"
 
 def sample_to_clones():
-    return {"filtered_data/mixcr/clone_summary/{0}_clone_summary.txt".format(s) : s for s in samples["sample"]}
+    return {"data/mixcr/clone_summary/{0}_clone_summary.txt".format(s) : s for s in samples["sample"]}
 
 rule gather_output:
     input:
@@ -42,6 +43,7 @@ rule gather_output:
                     for line in clones[1:]:
                         summary.write(files[sample] + "\t" + line)
 rule calc_clonality:
+    conda: "envs/igFinder.yaml"
     input:
         config["clones_file"]
     output:
