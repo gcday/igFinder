@@ -49,3 +49,11 @@ rule samtools_fastq:
         "samtools fastq -N -@ {threads} "
         "-1 {output.one} -2 {output.two} -s {output.singleton} {input} && "
         "touch {output.singleton}"
+rule count_reads:
+    input:
+        get_bam
+    output:
+        "data/read_counts/{sample}.txt"
+    threads: 16
+    shell:
+        "samtools view -@ 16 -c {input} > {output}"
