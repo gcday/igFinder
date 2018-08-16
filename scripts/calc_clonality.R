@@ -6,6 +6,7 @@ gm_mean = function(x, na.rm=TRUE){
 # setwd("/Users/grady/OneDrive - Leland Stanford Junior University/Mayo")
 
 cc <- read.table(snakemake@input[[1]], sep='\t', header=TRUE, fill=TRUE)
+reads_table <- read.table(snakemake@input[[2]], sep='\t', header=TRUE, fill=TRUE)
 # cc <- read.table("20180701_custom_capture_clones.tsv", sep='\t', header=TRUE, fill=TRUE)
 
 cc[is.na(cc)] <- 0
@@ -22,12 +23,12 @@ cc_avg <- select(cc, sample, cloneFraction, cloneCount) %>%
   summarize(meanFreq = mean(cloneFraction), 
             geomeanFreq = gm_mean(cloneFraction), 
             ratioMeans = mean(cloneFraction) / gm_mean(cloneFraction),
-            read_count = sum(cloneCount))
+            vdj_read_count = sum(cloneCount))
 
 cc_avg <- mutate(cc_avg, clonal = meanFreq >= 0.2 | ratioMeans > 1.25)
-cc_frac <- left_join(cc_avg, most_common, by = "sample") %>% mutate(singleCloneFraction = singleCloneReads / read_count)
+cc_frac <- left_join(cc_avg, most_common, by = "sample") %>% mutate(singleCloneFraction = singleCloneReads / vdj_read_count)
 cc_frac[is.na(cc_frac)] <- 0
 cc_final <- mutate(cc_frac, updated_clonality = singleCloneFraction > 0.5)
-
+cc_final <- left_join(cc_final, reads_table, by = "sample")
 write.table(cc_final, file = snakemake@output[[1]], 
             quote=FALSE, sep = "\t", row.names = FALSE)

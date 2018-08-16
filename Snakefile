@@ -31,7 +31,7 @@ rule gather_read_counts:
   run:
     files = sample_to_read_counts()
     with open(output[0], "w+") as summary:
-      summary.write("sample\tread_count")
+      summary.write("sample\tread_count\n")
       for sample in files:
         with open(sample) as file:
           count = file.readline()
@@ -66,7 +66,8 @@ rule gather_output:
 rule calc_clonality:
   conda: "envs/R.yaml"
   input:
-    config["clones_file"]
+    config["clones_file"],
+    "read_counts.tsv"
   output:
     config["stats_file"]    
   script:

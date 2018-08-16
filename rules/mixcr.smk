@@ -25,8 +25,9 @@ rule mixcr_assemble:
   log:
     "logs/mixcr_assemble/{sample}.log"
     #group: "igFinder"
+  threads: 4
   shell: 
-    "mixcr assemble -f -i {output.index} {input} {output.clones}"
+    "mixcr assemble -f -t {threads} -i {output.index} {input} {output.clones}"
 
 rule mixcr_export:
   input:
@@ -55,13 +56,19 @@ rule mixcr_export_sig_clones:
   log:
     "logs/mixcr_export_sig_clones/{sample}.log"
   output:
-    "tmp/mixcr/{sample}",
+    directory("tmp/mixcr/{sample}"),
     "results/mixcr/vdj_seqs/{sample}.vdj.fa"
   threads: 16
   #group: "igFinder"
   shell:
     "scripts/assemble_clones.sh {input} {output} {threads} "
     "{wildcards.sample}"
+
+rule mixcr_join_sig_clones:
+  input:
+    rules.mixcr_export.output.short,
+    rules.mixcr_export_sig_clones.output,
+
 
 min_reads_for_assembly = 3
 min_fraction_for_assembly = 0.05

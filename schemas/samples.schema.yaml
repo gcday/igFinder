@@ -5,10 +5,18 @@ properties:
   sample:
     type: string
     description: sample name/identifier
+  status:
+    type: string
+    description: tumor for tumor samples, normal for germline / pooled ref samples
   bam:
     type: string
     description: path to the bam file containing aligned reads from the given sample
-
+  solution_number:
+    type: string
+    description: short pretty name for final output (for consistency with prior work)
+  MM_Status:
+    type: string
+    description: clinical info (e.g. MGUS, SMM, etc.)
 required:
   - sample
   - bam

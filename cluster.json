@@ -3,7 +3,7 @@
     {
         "account" : "gday",
         "time" : "08:00:00",
-        "c" : 4,
+        "c" : 1,
         "partition" : "normal",
         "mem-per-cpu" : 3000,
         "job-name" : "{rule}.{wildcards}",
