@@ -11,8 +11,8 @@ rule mixcr_align:
   #group: "igFinder"
   shell: 
     "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
-    "-OvParameters.geneFeatureToAlign=VGeneWithP "
     "-OallowPartialAlignments=true "
+    "-OvParameters.geneFeatureToAlign=VGeneWithP "
     "{input} {output}"
 
 rule mixcr_assemble:
@@ -64,19 +64,25 @@ rule mixcr_export_sig_clones:
     "scripts/assemble_clones.sh {input} {output} {threads} "
     "{wildcards.sample}"
 
-rule mixcr_join_sig_clones:
+rule igblast:
   input:
-    rules.mixcr_export.output.short,
-    rules.mixcr_export_sig_clones.output,
+    "results/mixcr/vdj_seqs/{sample}.vdj.fa"
+
+  ""
+
+# rule mixcr_join_sig_clones:
+#   input:
+#     rules.mixcr_export.output.short,
+#     rules.mixcr_export_sig_clones.output,
 
 
-min_reads_for_assembly = 3
-min_fraction_for_assembly = 0.05
-def get_sig_clones(wildcards, input):
-  clones = pd.read_table(input["clones"]).set_index("cloneID", drop=False)
-  sig_clones = clones.loc[int(clones["cloneCount"]) >= min_reads_for_assembly |
-                    int(clones["cloneFraction"]) >= min_fraction_for_assembly]
-  return " ".join(sig_clones["cloneID"])
+# min_reads_for_assembly = 3
+# min_fraction_for_assembly = 0.05
+# def get_sig_clones(wildcards, input):
+#   clones = pd.read_table(input["clones"]).set_index("cloneID", drop=False)
+#   sig_clones = clones.loc[int(clones["cloneCount"]) >= min_reads_for_assembly |
+#                     int(clones["cloneFraction"]) >= min_fraction_for_assembly]
+#   return " ".join(sig_clones["cloneID"])
 
 # rule export_reads_sig_clones:
 #   input:
