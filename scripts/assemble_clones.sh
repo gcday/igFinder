@@ -1,15 +1,23 @@
 #!/bin/bash
 
 clns_txt=$(realpath $1)
-vdjca_file=$(realpath $2)
-mixcr_index=$(realpath $3)
-OUT=$(realpath $4)
-VDJ_seqs=$(realpath $5)
-threads=$6
-FILENAME=$7
+clna_file=$(realpath $2)
+OUT=$(realpath $3)
+VDJ_seqs=$(realpath $4)
+threads=$5
+FILENAME=$6
+# mixcr_index=$(realpath $3)
+# OUT=$(realpath $4)
+# VDJ_seqs=$(realpath $5)
+# threads=$6
+# FILENAME=$7
 
 
 sig_clones=($(awk  'FNR > 1 {if (($3 >= 0.05 || $2 >= 5))  print $1}' $clns_txt))
+sig_clones=(${sig_clones[0]})
+# sig_clones=($(awk  'FNR > 1 {if (($3 >= 0.05 || $2 >= 5))  print $1}' $clns_txt))
+
+
 # will try to assemble all clones with EITHER:
 #    1) more than 5 reads
 #    2) Clonal fraction over 0.05
@@ -37,7 +45,7 @@ touch "$VDJ_seqs"
 for X in "${sig_clones[@]}"; do
     echo "processing clone $X"
     mkdir ${OUT}/vOpt_temp/${X}
-    mixcr exportReadsForClones $mixcr_index $vdjca_file ${X} ${OUT}/reads.fastq
+    mixcr exportReadsForClones -f -s $clna_file --id ${X} ${OUT}/reads.fastq
     cd ${OUT}/vOpt_temp/${X}
     
     # $VELVETOPTIMISER -v -s 51 -e 151 -x 4 -t $threads -c n50*tbp \

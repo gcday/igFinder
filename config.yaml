@@ -1,7 +1,16 @@
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
-samples: 20180703_samples.tsv
-clones_file: 20180712_custom_capture_clones.tsv
-stats_file: 20180712_custom_capture_stats.tsv
+# samples: 20180831_lambda_kappa.samples.tsv
+samples: "/farmshare/user_data/gday/mayo/projects/remap_pipeline/20181022_samples.tsv"
+clones_file: 20180905_lambda_kappa_clones.tsv
+stats_file: 20180905_lambda_kappa_stats.tsv
 
 ig_bed: Ig_exons.sorted.extended300.merged.bed
+
+igblast:
+  germline_db_V: "/farmshare/user_data/gday/mayo/data/imgt/IG_V.ncbi.fasta"
+  germline_db_J: "/farmshare/user_data/gday/mayo/data/imgt/IG_J.ncbi.fasta"
+  germline_db_D: "/farmshare/user_data/gday/mayo/data/imgt/IG_D.ncbi.fasta"
+  auxiliary_file: "/farmshare/user_data/gday/mayo/software/ncbi-igblast-1.9.0/optional_file/human_gl.aux"
+
+
 

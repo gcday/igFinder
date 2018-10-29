@@ -5,7 +5,7 @@
         "time" : "08:00:00",
         "c" : 1,
         "partition" : "normal",
-        "mem-per-cpu" : 3000,
+        "mem" : 3000,
         "job-name" : "{rule}.{wildcards}",
         "output" : "{log}.cluster",
         "error" : "{log}.cluster"
@@ -13,31 +13,31 @@
     "cnvkit_segment" :
     {
         "c" : 4,
-        "mem-per-cpu" : 4000
+        "mem" : 4000
     },
     "mutect" :
     {
         "c" : 1,
-        "mem-per-cpu" : 4000
+        "mem" : 4000
     },
     "samtools_sort" :
     {
         "c" : 4,
-        "mem-per-cpu" : 3000
+        "mem" : 3000
     },
     "samtools_fastq" :
     {
         "c" : 4,
-        "mem-per-cpu" : 1000
+        "mem" : 1000
     },
     "mixcr_assemble" :
     {
         "c" : 1,
-        "mem-per-cpu" : 8000
+        "mem" : 8000
     },
     "mixcr_export" :
     {
         "c" : 1,
-        "mem-per-cpu" : 8000
+        "mem" : 8000
     },
 }

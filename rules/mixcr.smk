@@ -2,37 +2,41 @@ rule mixcr_align:
   input:
     rules.samtools_fastq.output.one,
     rules.samtools_fastq.output.two
-  conda: "../envs/igFinder.yaml"
+  #conda: "../envs/igFinder.yaml"
   log:
     "logs/mixcr_align/{sample}.log"
   output:
     "data/mixcr/aligned/{sample}.vdjca"
-  threads: 16
+  threads: 24
   #group: "igFinder"
   shell: 
-    "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
-    "-OallowPartialAlignments=true "
+    "mixcr align -t {threads} -p kAligner2 -f -s hsa "
+    "-OallowPartialAlignments=true -OsaveOriginalReads=true "
     "-OvParameters.geneFeatureToAlign=VGeneWithP "
-    "{input} {output}"
+    "{input} {output} 1>{log} 2>&1"
+    # "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
+
 
 rule mixcr_assemble:
   input:
     rules.mixcr_align.output
-  conda: "../envs/igFinder.yaml"
+  #conda: "../envs/igFinder.yaml"
   output:
-    index="data/mixcr/index/{sample}.index",
-    clones="data/mixcr/clones/{sample}.clns"
+    clones="data/mixcr/clones/{sample}.clna"
+    # index="data/mixcr/index/{sample}.index",
   log:
     "logs/mixcr_assemble/{sample}.log"
     #group: "igFinder"
   threads: 4
   shell: 
-    "mixcr assemble -f -t {threads} -i {output.index} {input} {output.clones}"
+    "mixcr assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
+
+    # "mixcr assemble -f -t {threads} -i {output.index} {input} {output.clones}"
 
 rule mixcr_export:
   input:
     rules.mixcr_assemble.output.clones
-  conda: "../envs/igFinder.yaml"
+  #conda: "../envs/igFinder.yaml"
   output:
     short="data/mixcr/clone_summary/{sample}_clone_summary.txt",
     full="data/mixcr/full_clones/{sample}_full_clones.txt"
@@ -40,7 +44,7 @@ rule mixcr_export:
     "logs/mixcr_export/{sample}.log"
     #group: "igFinder"
   shell:
-    "mixcr exportClones -cloneId -count -fraction -vGene -dGene -jGene "
+    "mixcr exportClones -t -cloneId -count -fraction -vGene -dGene -jGene "
     "-aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents "
     "-jBestIdentityPercent -jIdentityPercents -nFeature CDR3 "
     "-avrgFeatureQuality CDR3 -minFeatureQuality CDR3 "
@@ -50,25 +54,33 @@ rule mixcr_export:
 rule mixcr_export_sig_clones:
   input:
     rules.mixcr_export.output.short,
-    rules.mixcr_align.output,
-    rules.mixcr_assemble.output.index
-  conda: "../envs/igFinder.yaml"
+    rules.mixcr_assemble.output
+  #conda: "../envs/igFinder.yaml"
   log:
     "logs/mixcr_export_sig_clones/{sample}.log"
   output:
     directory("tmp/mixcr/{sample}"),
-    "results/mixcr/vdj_seqs/{sample}.vdj.fa"
+    contigs = "results/mixcr/top_func_seq/{sample}.vdj.fa"
   threads: 16
   #group: "igFinder"
   shell:
     "scripts/assemble_clones.sh {input} {output} {threads} "
-    "{wildcards.sample}"
+    "{wildcards.sample} 1>{log} 2>&1"
 
 rule igblast:
   input:
-    "results/mixcr/vdj_seqs/{sample}.vdj.fa"
+    contigs="results/mixcr/top_func_seq/{sample}.vdj.fa",
+    db_V = config["igblast"]["germline_db_V"],
+    db_J = config["igblast"]["germline_db_J"],
+    db_D = config["igblast"]["germline_db_D"],
+    aux_file = config["igblast"]["auxiliary_file"]
+  output:
+    "results/igblast/{sample}_igblast_output.txt"
+  shell:
+    "igblastn -germline_db_V {input.db_V} -germline_db_J {input.db_J} "
+    "-germline_db_D {input.db_D} -query {input.contigs} -outfmt 7 "
+    "-auxiliary_data {input.aux_file} > {output} " 
 
-  ""
 
 # rule mixcr_join_sig_clones:
 #   input:
@@ -141,7 +153,7 @@ rule igblast:
 #     clones=rules.mixcr_export.output.short,
 #     vdjca=rules.mixcr_align.output,
 #     index=rules.mixcr_assemble.output.index
-#   conda: "../envs/igFinder.yaml"
+#   #conda: "../envs/igFinder.yaml"
 #   log:
 #     "logs/mixcr_export_sig_clones/{sample}.log"
 #   output:
