@@ -5,7 +5,7 @@
         "time" : "08:00:00",
         "c" : 1,
         "partition" : "normal",
-        "mem" : 3000,
+        "mem" : 8000,
         "job-name" : "{rule}.{wildcards}",
         "output" : "{log}.cluster",
         "error" : "{log}.cluster"
@@ -32,12 +32,17 @@
     },
     "mixcr_assemble" :
     {
-        "c" : 1,
+        "c" : 4,
         "mem" : 8000
     },
     "mixcr_export" :
     {
         "c" : 1,
         "mem" : 8000
+    },
+    "mixcr_align" :
+    {
+        "c" : 4,
+        "mem" : 12000
     },
 }

@@ -12,16 +12,25 @@ validate(samples, schema="schemas/samples.schema.yaml")
 config["clones_file"] = "{}_clones.tsv".format(samples_root)
 config["stats_file"] = "{}_stats.tsv".format(samples_root)
 
-tumor_list = samples.query('MM_Status == ["SMM"]')["sample"]
-
+config["igblast_file"] = "{}_igblast.tsv".format(samples_root)
+ 
+# samples_of_int = samples.query('MM_Status == ["SMM"]')
+samples_of_int = samples.query('MM_Status == ["SMM", "Untreated MM", "MGUS", "Post induction MM", "Relapsed MM", "Post ASCT"]')
+sample_list = samples_of_int["sample"]
 
 include: "rules/samtools_filtering.smk"
 include: "rules/mixcr.smk"
 
 rule def_all:
   input:
-      expand("results/igblast/{sample}_igblast_output.txt", sample=tumor_list)
+    config["igblast_file"],
+    config["clones_file"]    
+    # expand("results/mixcr/top_func_seq/{sample}.vdj.fa", sample=sample_list)
 
+    # config["igblast_file"]
+
+    #   expand("results/igblast/{sample}_igblast_output.txt", sample=sample_list)
+ 
     # expand(["data/fastq/{sample}_1.fastq", "data/fastq/{sample}_2.fastq"], sample=samples["sample"][1])
 
     # expand("results/igblast/{sample}_igblast_output.txt", sample=samples["sample"][1])
@@ -32,10 +41,55 @@ rule def_all:
 
 
 def sample_to_clones():
-  return {"data/mixcr/clone_summary/{0}_clone_summary.txt".format(s) : s for s in samples["sample"]}
+  return {"data/mixcr/clone_summary/{0}_clone_summary.txt".format(s) : s for s in sample_list}
 def sample_to_read_counts():
-  return {"data/read_counts/{0}.txt".format(s) : s for s in samples["sample"]}
+  return {"data/read_counts/{0}.txt".format(s) : s for s in sample_list}
 
+def sample_to_igblast():
+  return {"results/igblast/{0}_igblast_output.txt".format(s) : s for s in sample_list}
+
+def sample_to_igblast():
+  return {s :"results/igblast/{0}_igblast_output.txt".format(s) for s in sample_list}
+
+
+rule gather_igblast:
+  input:
+    expand("results/igblast/{sample}_igblast_output.txt", sample = sample_list)
+  output:
+    config["igblast_file"]
+  run:
+    files = sample_to_igblast()
+    igblast_samples = samples_of_int.copy()
+    max_V_ident = []
+    for sample in samples_of_int["sample"]:
+      with open(files[sample]) as igblast:
+        max_ident = ""
+        for line in igblast.readlines():
+          if "Total\tN/A" in line:
+            split = line.strip().split()
+            curr_ident = float(split[-1])
+            max_ident = str(curr_ident)
+            if (curr_ident < 99.0):
+              break
+        max_V_ident += [max_ident]
+    igblast_samples["max_V_ident"] = max_V_ident
+    igblast_samples = igblast_samples.drop(["sample", "mutect2.vcf"], axis = 1)
+    igblast_samples.to_csv(output[0], sep = "\t")
+    # for sample in files:
+    # with open(output[0], "w+") as summary:
+    #   summary.write("sample\tmax_V_ident\n")
+    #   for sample in files:
+    #     with open(sample) as file:
+    #       max_ident = ""
+    #       for line in file.readlines():
+    #         if "Total\tN/A" in line:
+    #           split = line.strip().split()
+    #           curr_ident = float(split[-1])
+    #           max_ident = str(curr_ident)
+    #           if (curr_ident < 99.0):
+    #             break
+          # count = file.readline()
+          # summary.write(files[sample] + "\t" + max_ident + "\n")
 
 rule gather_read_counts:
   input:
