@@ -28,20 +28,7 @@ include: "rules/mixcr.smk"
 rule def_all:
   input:
     config["igblast_file"],
-    config["clones_file"]    
-    # expand("results/mixcr/top_func_seq/{sample}.vdj.fa", sample=sample_list)
-
-    # config["igblast_file"]
-
-    #   expand("results/igblast/{sample}_igblast_output.txt", sample=sample_list)
- 
-    # expand(["data/fastq/{sample}_1.fastq", "data/fastq/{sample}_2.fastq"], sample=samples["sample"][1])
-
-    # expand("results/igblast/{sample}_igblast_output.txt", sample=samples["sample"][1])
-    # config["stats_file"],
-    # expand("results/mixcr/vdj_seqs/{sample}.vdj.fa", sample=samples["sample"]) #, workflow=workflow.basedir)
-
-    # "read_counts.tsv",
+    config["clones_file"]
 
 
 def sample_to_clones():
@@ -79,21 +66,6 @@ rule gather_igblast:
     igblast_samples["max_V_ident"] = max_V_ident
     igblast_samples = igblast_samples.drop(["sample", "mutect2.vcf"], axis = 1)
     igblast_samples.to_csv(output[0], sep = "\t")
-    # for sample in files:
-    # with open(output[0], "w+") as summary:
-    #   summary.write("sample\tmax_V_ident\n")
-    #   for sample in files:
-    #     with open(sample) as file:
-    #       max_ident = ""
-    #       for line in file.readlines():
-    #         if "Total\tN/A" in line:
-    #           split = line.strip().split()
-    #           curr_ident = float(split[-1])
-    #           max_ident = str(curr_ident)
-    #           if (curr_ident < 99.0):
-    #             break
-          # count = file.readline()
-          # summary.write(files[sample] + "\t" + max_ident + "\n")
 
 rule gather_read_counts:
   input:

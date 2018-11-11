@@ -2,13 +2,10 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "08:00:00",
-        "c" : 1,
+        "time" : "03:00:00",
+        "c" : 4,
         "partition" : "normal",
-        "mem" : 8000,
-        "job-name" : "{rule}.{wildcards}",
-        "output" : "{log}.cluster",
-        "error" : "{log}.cluster"
+        "mem" : 10000,
     },
     "samtools_sort" :
     {
@@ -40,4 +37,10 @@
         "c" : 4,
         "mem" : 10000
     },
+    "commented":
+    {
+        "job-name" : "{rule}.{wildcards}",
+        "output" : "{log}.cluster",
+        "error" : "{log}.cluster"
+    }
 }

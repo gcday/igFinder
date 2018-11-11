@@ -8,7 +8,7 @@ rule mixcr_align:
   output:
     "data/mixcr/aligned/{sample}.vdjca"
   threads: 4
-  #group: "igFinder"
+  group: "igFinder"
   shell: 
     "mixcr align -t {threads} -p kAligner2 -f -s hsa "
     "-OallowPartialAlignments=true -OsaveOriginalReads=true "
@@ -25,7 +25,7 @@ rule mixcr_assemble:
     clones="data/mixcr/clones/{sample}.clna"
   log:
     "logs/mixcr_assemble/{sample}.log"
-    #group: "igFinder"
+  group: "igFinder"
   threads: 4
   shell: 
     "mixcr assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
@@ -42,7 +42,7 @@ rule mixcr_export:
     short = "-cloneId -count -fraction -vGene -dGene -jGene -aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents -jBestIdentityPercent -jIdentityPercents -nFeature CDR3 -avrgFeatureQuality CDR3 -minFeatureQuality CDR3"
   log:
     "logs/mixcr_export/{sample}.log"
-    #group: "igFinder"
+  group: "igFinder"
   shell:
     "mixcr exportClones -t -o {params.short} "
     "{input} {output.func_clones}; "
@@ -59,6 +59,7 @@ rule new_mixcr_export_sig:
     contigs = "results/mixcr/top_func_seq/{sample}.vdj.fa"
   log:
     "logs/mixcr_export_sig_clones/{sample}.log"
+  group: "igFinder"
   threads: 1
   script:
     "../scripts/assemble_clones.py"
@@ -72,6 +73,7 @@ rule igblast:
     aux_file = config["igblast"]["auxiliary_file"]
   output:
     "results/igblast/{sample}_igblast_output.txt"
+  group: "igFinder"
   shell:
     "if [ -s {input.contigs} ]\n"
     "then\n"
