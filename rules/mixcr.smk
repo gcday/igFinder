@@ -7,7 +7,7 @@ rule mixcr_align:
     "logs/mixcr_align/{sample}.log"
   output:
     "data/mixcr/aligned/{sample}.vdjca"
-  threads: 8
+  threads: 4
   #group: "igFinder"
   shell: 
     "mixcr align -t {threads} -p kAligner2 -f -s hsa "

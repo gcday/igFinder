@@ -10,39 +10,34 @@
         "output" : "{log}.cluster",
         "error" : "{log}.cluster"
     },
-    "cnvkit_segment" :
-    {
-        "c" : 4,
-        "mem" : 4000
-    },
-    "mutect" :
-    {
-        "c" : 1,
-        "mem" : 4000
-    },
     "samtools_sort" :
     {
         "c" : 4,
-        "mem" : 3000
+        "mem" : 10000
+    },
+    "samtools_filter" :
+    {
+        "c" : 4,
+        "mem" : 10000
     },
     "samtools_fastq" :
     {
         "c" : 4,
-        "mem" : 1000
+        "mem" : 10000
     },
     "mixcr_assemble" :
     {
         "c" : 4,
-        "mem" : 8000
+        "mem" : 10000
     },
     "mixcr_export" :
     {
         "c" : 1,
-        "mem" : 8000
+        "mem" : 4000
     },
     "mixcr_align" :
     {
         "c" : 4,
-        "mem" : 12000
+        "mem" : 10000
     },
 }
