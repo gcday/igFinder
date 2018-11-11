@@ -12,7 +12,7 @@ rule samtools_filter:
         temp2=temp("data/filtered_bam/temp_2_{sample}.bam")
     log:
         "logs/samtools_filter/{sample}.log"
-    threads: 16
+    threads: 4
     #group: "igFinder"
     shell:
       "samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam} && "
@@ -28,7 +28,7 @@ rule samtools_sort:
         temp("data/filtered_namesorted_reads/{sample}.bam")
     log:
         "logs/samtools_sort/{sample}.log"
-    threads: 16
+    threads: 4
     #group: "igFinder"
     shell:
         "samtools sort -t /tmp -n -m 2000M -@ {threads} -o {output} {input}"
@@ -43,7 +43,7 @@ rule samtools_fastq:
         singleton=temp("data/fastq/{sample}_singleton.fastq")
     log:
         "logs/samtools_fastq/{sample}.log"
-    threads: 16
+    threads: 4
     #group: "igFinder"
     shell:
         "samtools fastq -N -@ {threads} "
@@ -54,6 +54,6 @@ rule count_reads:
         get_bam
     output:
         "data/read_counts/{sample}.txt"
-    threads: 16
+    threads: 4
     shell:
         "samtools view -@ 16 -c {input} > {output}"

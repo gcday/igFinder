@@ -15,9 +15,13 @@ config["stats_file"] = "{}_stats.tsv".format(samples_root)
 config["igblast_file"] = "{}_igblast.tsv".format(samples_root)
  
 # samples_of_int = samples.query('MM_Status == ["SMM"]')
-samples_of_int = samples.query('MM_Status == ["SMM", "Untreated MM", "MGUS", "Post induction MM", "Relapsed MM", "Post ASCT"]')
-sample_list = samples_of_int["sample"]
+# samples_of_int = samples.query('MM_Status == ["SMM", "Untreated MM", "MGUS", "Post induction MM", "Relapsed MM", "Post ASCT"]')
 
+
+samples_of_int = samples
+sample_list = samples_of_int["sample"]
+# sample_list.remove("7216801_20110412_BM")
+# samples_of_int = samples.query('')
 include: "rules/samtools_filtering.smk"
 include: "rules/mixcr.smk"
 
