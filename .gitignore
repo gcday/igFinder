@@ -1,3 +1,5 @@
 .snakemake/
 data/
 logs/
+results/
+tmp/

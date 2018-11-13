@@ -2,7 +2,8 @@
 # samples: 20180831_lambda_kappa.samples.tsv
 samples: "20181110_CoMMpass_prelim.tsv"
 
-ig_bed: Ig_exons.sorted.extended300.merged.bed
+ig_bed: "/farmshare/user_data/gday/mayo/data/reference/ig_large_regions.bed"
+# ig_bed: Ig_exons.sorted.extended300.merged.bed
 
 igblast:
   germline_db_V: "/farmshare/user_data/gday/mayo/data/imgt/IG_V.ncbi.fasta"

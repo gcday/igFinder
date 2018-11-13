@@ -16,6 +16,7 @@ rule samtools_filter:
     group: "igFinder"
     shell:
       "exec 2> {log}; "
+      "samtools index -@ {threads} {input.bam} && "
       "samtools view -uh -@ {threads} -f 13 -o {output.temp1} {input.bam} && "
       "samtools view -uh -@ {threads} -f 1 -M -L {input.ig_bed}  " 
       " -o {output.temp2} {input.bam} && "
