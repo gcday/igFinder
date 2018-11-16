@@ -15,6 +15,4 @@ properties:
     type: string
 required:
   - samples
-  - clones_file
-  - stats_file
   - ig_bed

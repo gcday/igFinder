@@ -8,7 +8,7 @@ from Bio import SeqIO
 sys.stdout = open(str(snakemake.log), "w")
 
 clones = pd.read_table(snakemake.input["clones"], sep="\t").set_index("cloneId", drop=False)
-sig_clones = clones.query("cloneFraction >= 0.05 | cloneCount >= 10")["cloneId"]
+sig_clones = clones.query("cloneFraction >= 0.05 | cloneCount >= 10")["cloneId"][:10]
 print(sig_clones, flush = True)
 if os.path.exists(snakemake.output.tempdir):
 	shutil.rmtree(snakemake.output.tempdir)

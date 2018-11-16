@@ -2,47 +2,42 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "08:00:00",
-        "c" : 1,
+        "time" : "13:00:00",
+        "c" : "{threads}",
         "partition" : "normal",
-        "mem" : 8000,
+        "mem" : "{resources.mem_mb}",
         "job-name" : "{rule}.{wildcards}",
         "output" : "{log}.cluster",
         "error" : "{log}.cluster"
     },
-    "cnvkit_segment" :
+    "_samtools_sort" :
     {
         "c" : 4,
-        "mem" : 4000
+        "mem" : 10000
     },
-    "mutect" :
+    "_samtools_filter" :
+    {
+        "c" : 4,
+        "mem" : 10000
+    },
+    "_samtools_fastq" :
+    {
+        "c" : 4,
+        "mem" : 10000
+    },
+    "_mixcr_assemble" :
+    {
+        "c" : 8,
+        "mem" : 20000
+    },
+    "_mixcr_export" :
     {
         "c" : 1,
         "mem" : 4000
     },
-    "samtools_sort" :
+    "_mixcr_align" :
     {
         "c" : 4,
-        "mem" : 3000
-    },
-    "samtools_fastq" :
-    {
-        "c" : 4,
-        "mem" : 1000
-    },
-    "mixcr_assemble" :
-    {
-        "c" : 4,
-        "mem" : 8000
-    },
-    "mixcr_export" :
-    {
-        "c" : 1,
-        "mem" : 8000
-    },
-    "mixcr_align" :
-    {
-        "c" : 4,
-        "mem" : 12000
+        "mem" : 10000
     },
 }
