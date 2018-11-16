@@ -1,4 +1,5 @@
 import pandas as pd
+import glob
 
 from snakemake.utils import validate, min_version
 min_version("5.1.5")
@@ -27,8 +28,6 @@ sra_table = sra_table.query('Assay_Type == "RNA-Seq"')
 # sample_list.remove("7216801_20110412_BM")
 # samples_of_int = samples.query('')
 # include: "rules/samtools_filtering.smk"
-include: "rules/mixcr.smk"
-include: "rules/sra.smk"
 
 samples_of_interest = []
 for sample in samples["sample"]:
@@ -37,11 +36,20 @@ for sample in samples["sample"]:
 print(len(samples_of_interest))
 samples_of_int = samples[[sample in samples_of_interest for sample in samples["sample"]]]
 
+s_to_vdjca = {s : "data/mixcr/aligned/{}.vdjca".format(s) for s in samples_of_int["sample"]}
+sample_list = [s for (s, path) in s_to_vdjca.items() if path in glob.glob("data/mixcr/aligned/*.vdjca")]
+print(len(sample_list))
+sample_list = sample_list + list(samples_of_int["sample"][:50])
 # samples_of_int = samples
-sample_list = samples_of_int["sample"]
+# finished = "results/igblast/{sample}_igblast_output.txt"
+
+include: "rules/mixcr.smk"
+include: "rules/sra.smk"
+include: "rules/gather_stats.smk"
+
 rule def_all:
   input:
     config["igblast_file"],
-    config["clones_file"]
+    # config["clones_file"]
 
 

@@ -13,8 +13,8 @@ rule download:
         # bam_file="data/bam/{sample}.bam"
     log:
         "logs/download/{sample}.log"
-    group: "igFinder"
-    threads: 16
+    # group: "sra"
+    threads: 8
     shell:
         "cd {params.sra_dir}; fasterq-dump -p {params.srr} 1>{params.log_path} 2>&1 && "
         "mv {params.srr}_1.fastq {params.fq1_path} && mv {params.srr}_2.fastq {params.fq2_path} "

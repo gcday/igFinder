@@ -2,45 +2,42 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "16:00:00",
-        "c" : 16,
+        "time" : "3:00:00",
+        "c" : 8,
         "partition" : "normal",
         "mem" : 20000,
+        "job-name" : "{rule}.{wildcards}",
+        "output" : "{log}.cluster",
+        "error" : "{log}.cluster"
     },
-    "samtools_sort" :
+    "_samtools_sort" :
     {
         "c" : 4,
         "mem" : 10000
     },
-    "samtools_filter" :
+    "_samtools_filter" :
     {
         "c" : 4,
         "mem" : 10000
     },
-    "samtools_fastq" :
+    "_samtools_fastq" :
     {
         "c" : 4,
         "mem" : 10000
     },
-    "mixcr_assemble" :
+    "_mixcr_assemble" :
     {
-        "c" : 4,
-        "mem" : 10000
+        "c" : 8,
+        "mem" : 20000
     },
-    "mixcr_export" :
+    "_mixcr_export" :
     {
         "c" : 1,
         "mem" : 4000
     },
-    "mixcr_align" :
+    "_mixcr_align" :
     {
         "c" : 4,
         "mem" : 10000
     },
-    "commented":
-    {
-        "job-name" : "{rule}.{wildcards}",
-        "output" : "{log}.cluster",
-        "error" : "{log}.cluster"
-    }
 }

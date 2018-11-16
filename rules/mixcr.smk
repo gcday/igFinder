@@ -1,14 +1,14 @@
 rule mixcr_align:
   input:
-    rules.download.output.fastq1,
-    rules.download.output.fastq2
+    "data/temp/fastq/{sample}_1.fastq",
+    "data/temp/fastq/{sample}_2.fastq"
   #conda: "../envs/igFinder.yaml"
   log:
     "logs/mixcr_align/{sample}.log"
   output:
     "data/mixcr/aligned/{sample}.vdjca"
   threads: 16
-  group: "igFinder"
+  # group: "align"
   shell: 
     "mixcr align -t {threads} -p kAligner2 -f -s hsa "
     "-OallowPartialAlignments=true -OsaveOriginalReads=true "
@@ -24,10 +24,10 @@ rule mixcr_assemble:
     clones="data/mixcr/clones/{sample}.clna"
   log:
     "logs/mixcr_assemble/{sample}.log"
-  group: "igFinder"
+  # group: "igFinder"
   threads: 8
   shell: 
-    "mixcr assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
+    "mixcr -Xmx16000m assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
 
 rule mixcr_export:
   input:
@@ -41,7 +41,7 @@ rule mixcr_export:
     short = "-cloneId -count -fraction -vGene -dGene -jGene -aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents -jBestIdentityPercent -jIdentityPercents -nFeature CDR3 -avrgFeatureQuality CDR3 -minFeatureQuality CDR3"
   log:
     "logs/mixcr_export/{sample}.log"
-  group: "igFinder"
+  # group: "igFinder"
   shell:
     "mixcr exportClones -t -o {params.short} "
     "{input} {output.func_clones}; "
@@ -58,8 +58,8 @@ rule new_mixcr_export_sig:
     contigs = "results/mixcr/top_func_seq/{sample}.vdj.fa"
   log:
     "logs/mixcr_export_sig_clones/{sample}.log"
-  group: "igFinder"
-  threads: 1
+  # group: "igFinder"
+  threads: 16
   script:
     "../scripts/assemble_clones.py"
 
@@ -72,7 +72,7 @@ rule igblast:
     aux_file = config["igblast"]["auxiliary_file"]
   output:
     "results/igblast/{sample}_igblast_output.txt"
-  group: "igFinder"
+  # group: "igFinder"
   shell:
     "if [ -s {input.contigs} ]\n"
     "then\n"
