@@ -1,18 +1,37 @@
+def get_srr(wildcards):
+    return list(sra_table[sra_table['Sample_Name'].str.contains(str(wildcards.sample))]['Run'])[0]
+rule download:
+    params:
+        srr=get_srr,
+        sra_dir = config["sra_dir"],
+        fq1_path = os.path.abspath("data/temp/fastq/{sample}_1.fastq"),
+        fq2_path = os.path.abspath("data/temp/fastq/{sample}_2.fastq"),
+        log_path = os.path.abspath("logs/download/{sample}.log")
+    output:
+        fastq1=temp("data/temp/fastq/{sample}_1.fastq"),
+        fastq2=temp("data/temp/fastq/{sample}_2.fastq"),
+        # bam_file="data/bam/{sample}.bam"
+    log:
+        "logs/download/{sample}.log"
+    threads: 16
+    shell:
+        "cd {params.sra_dir}; fasterq-dump -p {params.srr} 1>{params.log_path} 2>&1 && "
+        "mv {params.srr}_1.fastq {params.fq1_path} && mv {params.srr}_2.fastq {params.fq2_path} "
+
 rule mixcr_align:
   input:
-    rules.samtools_fastq.output.one,
-    rules.samtools_fastq.output.two
+    rules.download.output.fastq1,
+    rules.download.output.fastq2
   #conda: "../envs/igFinder.yaml"
   log:
     "logs/mixcr_align/{sample}.log"
   output:
     "data/mixcr/aligned/{sample}.vdjca"
-  threads: 4
+  threads: 16
   group: "igFinder"
   shell: 
     "mixcr align -t {threads} -p kAligner2 -f -s hsa "
     "-OallowPartialAlignments=true -OsaveOriginalReads=true "
-    "-OvParameters.geneFeatureToAlign=VGeneWithP "
     "{input} {output} 1>{log} 2>&1"
     # "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
 
@@ -26,7 +45,7 @@ rule mixcr_assemble:
   log:
     "logs/mixcr_assemble/{sample}.log"
   group: "igFinder"
-  threads: 4
+  threads: 8
   shell: 
     "mixcr assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
 

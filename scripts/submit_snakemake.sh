@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --output=logs/master_snakemake.output
 #SBATCH --error=logs/master_snakemake.output
-#SBATCH --time=18:00:00
+#SBATCH --time=47:00:00
 
 source activate snakemake
 

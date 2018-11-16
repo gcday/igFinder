@@ -2,10 +2,10 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "03:00:00",
-        "c" : 4,
+        "time" : "16:00:00",
+        "c" : 16,
         "partition" : "normal",
-        "mem" : 10000,
+        "mem" : 20000,
     },
     "samtools_sort" :
     {
