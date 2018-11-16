@@ -13,6 +13,8 @@ rule download:
         # bam_file="data/bam/{sample}.bam"
     log:
         "logs/download/{sample}.log"
+    resources:
+        mem_mb=24000
     # group: "sra"
     threads: 8
     shell:

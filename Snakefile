@@ -39,7 +39,7 @@ samples_of_int = samples[[sample in samples_of_interest for sample in samples["s
 s_to_vdjca = {s : "data/mixcr/aligned/{}.vdjca".format(s) for s in samples_of_int["sample"]}
 sample_list = [s for (s, path) in s_to_vdjca.items() if path in glob.glob("data/mixcr/aligned/*.vdjca")]
 print(len(sample_list))
-sample_list = sample_list + list(samples_of_int["sample"][:50])
+# sample_list = sample_list + list(samples_of_int["sample"][:50])
 # samples_of_int = samples
 # finished = "results/igblast/{sample}_igblast_output.txt"
 

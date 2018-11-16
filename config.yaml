@@ -14,3 +14,5 @@ igblast:
 
 sra_dir: "/farmshare/user_data/gday/mayo/data/CoMMpass-sra/"
 sra_table: "/farmshare/user_data/gday/mayo/data/CoMMpass/20181105_SraRunTable.txt"
+
+genomic_source: False

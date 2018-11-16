@@ -14,6 +14,8 @@ rule gather_igblast:
     expand("results/igblast/{sample}_igblast_output.txt", sample = sample_list)
   output:
     config["igblast_file"]
+  resources:
+    mem_mb=24000
   run:
     files = sample_to_igblast()
     igblast_samples = samples_of_int.copy()
@@ -37,7 +39,9 @@ rule gather_read_counts:
   input:
     sample_to_read_counts()
   output:
-    "../read_counts.tsv"
+    "read_counts.tsv"
+  resources:
+    mem_mb=24000
   run:
     files = sample_to_read_counts()
     with open(output[0], "w+") as summary:
@@ -57,6 +61,8 @@ rule gather_output:
     sample_to_clones()
   output:
     config["clones_file"]
+  resources:
+    mem_mb=24000
   run:
     files = sample_to_clones()
     with open(output[0], "w+") as summary:
@@ -77,7 +83,9 @@ rule calc_clonality:
   conda: "../envs/R.yaml"
   input:
     config["clones_file"],
-    "../read_counts.tsv"
+    "read_counts.tsv"
+  resources:
+    mem_mb=24000
   output:
     config["stats_file"]    
   script:

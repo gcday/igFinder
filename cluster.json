@@ -2,10 +2,10 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "3:00:00",
-        "c" : 8,
+        "time" : "13:00:00",
+        "c" : "{threads}",
         "partition" : "normal",
-        "mem" : 20000,
+        "mem" : "{resources.mem_mb}",
         "job-name" : "{rule}.{wildcards}",
         "output" : "{log}.cluster",
         "error" : "{log}.cluster"

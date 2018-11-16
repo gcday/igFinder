@@ -1,3 +1,8 @@
+def get_align_target(wildcards):
+  if (config["genomic_source"]):
+    return "-OvParameters.geneFeatureToAlign=VGeneWithP "
+  return ""
+
 rule mixcr_align:
   input:
     "data/temp/fastq/{sample}_1.fastq",
@@ -5,15 +10,19 @@ rule mixcr_align:
   #conda: "../envs/igFinder.yaml"
   log:
     "logs/mixcr_align/{sample}.log"
+  resources:
+    mem_mb=24000
   output:
     "data/mixcr/aligned/{sample}.vdjca"
-  threads: 16
+  threads: 8
+  params:
+    tgt=get_align_target
   # group: "align"
   shell: 
     "mixcr align -t {threads} -p kAligner2 -f -s hsa "
     "-OallowPartialAlignments=true -OsaveOriginalReads=true "
+    "{params.tgt} "
     "{input} {output} 1>{log} 2>&1"
-    # "mixcr align -t {threads} -g -a -f -p rna-seq -s hsa "
 
 
 rule mixcr_assemble:
@@ -22,17 +31,22 @@ rule mixcr_assemble:
   #conda: "../envs/igFinder.yaml"
   output:
     clones="data/mixcr/clones/{sample}.clna"
+  resources:
+    mem_mb=32000
+  params:
+    Xmx = lambda wildcards, resources: resources.mem_mb - 8000
   log:
     "logs/mixcr_assemble/{sample}.log"
   # group: "igFinder"
   threads: 8
   shell: 
-    "mixcr -Xmx16000m assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
+    "mixcr -Xmx{params.Xmx}m assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
 
 rule mixcr_export:
   input:
     rules.mixcr_assemble.output.clones
   #conda: "../envs/igFinder.yaml"
+
   output:
     short="data/mixcr/clone_summary/{sample}_clone_summary.txt",
     func_clones="data/mixcr/func_clones/{sample}_func_clones.txt",
@@ -41,6 +55,8 @@ rule mixcr_export:
     short = "-cloneId -count -fraction -vGene -dGene -jGene -aaFeature CDR3 -vBestIdentityPercent -vIdentityPercents -jBestIdentityPercent -jIdentityPercents -nFeature CDR3 -avrgFeatureQuality CDR3 -minFeatureQuality CDR3"
   log:
     "logs/mixcr_export/{sample}.log"
+  resources:
+    mem_mb=8000
   # group: "igFinder"
   shell:
     "mixcr exportClones -t -o {params.short} "
@@ -56,10 +72,12 @@ rule new_mixcr_export_sig:
   output:
     tempdir = directory("tmp/mixcr/{sample}"),
     contigs = "results/mixcr/top_func_seq/{sample}.vdj.fa"
+  resources:
+    mem_mb=16000
   log:
     "logs/mixcr_export_sig_clones/{sample}.log"
   # group: "igFinder"
-  threads: 16
+  threads: 8
   script:
     "../scripts/assemble_clones.py"
 
@@ -70,6 +88,8 @@ rule igblast:
     db_J = config["igblast"]["germline_db_J"],
     db_D = config["igblast"]["germline_db_D"],
     aux_file = config["igblast"]["auxiliary_file"]
+  resources:
+    mem_mb=8000
   output:
     "results/igblast/{sample}_igblast_output.txt"
   # group: "igFinder"
