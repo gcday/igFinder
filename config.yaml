@@ -11,7 +11,11 @@ igblast:
   germline_db_D: "/farmshare/user_data/gday/mayo/data/imgt/IG_D.ncbi.fasta"
   auxiliary_file: "/farmshare/user_data/gday/mayo/software/ncbi-igblast-1.9.0/optional_file/human_gl.aux"
 
-
+assembly:
+  min_frac_to_assemble: 0.01 
+  min_reads: 10
+  max_clones_to_assemble: 5
+  
 sra_dir: "/farmshare/user_data/gday/mayo/data/CoMMpass-sra/"
 sra_table: "/farmshare/user_data/gday/mayo/data/CoMMpass/20181105_SraRunTable.txt"
 
