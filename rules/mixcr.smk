@@ -14,7 +14,7 @@ rule mixcr_align:
     mem_mb=24000
   output:
     "data/mixcr/aligned/{sample}.vdjca"
-  threads: 8
+  threads: 16
   params:
     tgt=get_align_target
   # group: "align"
@@ -32,13 +32,13 @@ rule mixcr_assemble:
   output:
     clones="data/mixcr/clones/{sample}.clna"
   resources:
-    mem_mb=32000
+    mem_mb=24000
   params:
     Xmx = lambda wildcards, resources: resources.mem_mb - 8000
   log:
     "logs/mixcr_assemble/{sample}.log"
   # group: "igFinder"
-  threads: 8
+  threads: 16
   shell: 
     "mixcr -Xmx{params.Xmx}m assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
 

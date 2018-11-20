@@ -18,5 +18,5 @@ rule download:
     # group: "sra"
     threads: 8
     shell:
-        "cd {params.sra_dir}; fasterq-dump -p {params.srr} 1>{params.log_path} 2>&1 && "
+        "cd {params.sra_dir}; fasterq-dump -m 8000MB -p {params.srr} 1>{params.log_path} 2>&1 && "
         "mv {params.srr}_1.fastq {params.fq1_path} && mv {params.srr}_2.fastq {params.fq2_path} "

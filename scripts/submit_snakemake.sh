@@ -9,7 +9,7 @@ source activate snakemake
 #--use-singularity --singularity-args "-B /farmshare:/farmshare" 
 srun snakemake  \
 --use-singularity --singularity-args "-B /farmshare:/farmshare" \
---latency-wait 100 -k  --printshellcmds -j 30 --rerun-incomplete --use-conda \
+--latency-wait 100 -k  --printshellcmds -j 40 --rerun-incomplete --use-conda \
 --cluster-config cluster.json  --cluster \
 "sbatch --mem {cluster.mem} -c {cluster.c} --job-name {cluster.job-name} -t {cluster.time} --output .snakemake/slurm-%j.out --error .snakemake/slurm-%j.out" \
 "$@"

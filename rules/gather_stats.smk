@@ -32,7 +32,7 @@ rule gather_igblast:
               break
         max_V_ident += [max_ident]
     igblast_samples["max_V_ident"] = max_V_ident
-    igblast_samples = igblast_samples.drop(["sample", "mutect2.vcf"], axis = 1)
+    # igblast_samples = igblast_samples.drop(["sample", "mutect2.vcf"], axis = 1)
     igblast_samples.to_csv(output[0], sep = "\t")
 
 rule gather_read_counts:
