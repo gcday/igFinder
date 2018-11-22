@@ -37,11 +37,12 @@ print(len(samples_of_interest))
 samples_of_int = samples[[sample in samples_of_interest for sample in samples["sample"]]]
 
 # s_to_vdjca = {s : "data/mixcr/aligned/{}.vdjca".format(s) for s in samples_of_int["sample"]}
-
 # sample_list = {s for (s, path) in s_to_vdjca.items() if path in glob.glob("data/mixcr/aligned/*.vdjca")}
-s_to_vdjca = {s : "results/mixcr/top_func_seq/{}.vdj.fa".format(s) for s in samples_of_int["sample"]}
+s_to_clna = {s : "data/mixcr/clones/{}.clna".format(s) for s in samples_of_int["sample"]}
+sample_list = {s for (s, path) in s_to_clna.items() if path in glob.glob("data/mixcr/clones/*.clna")}
+# s_to_vdjca = {s : "results/mixcr/top_func_seq/{}.vdj.fa".format(s) for s in samples_of_int["sample"]}
 
-sample_list = {s for (s, path) in s_to_vdjca.items() if path in glob.glob("results/mixcr/top_func_seq/*.vdj.fa")}
+# sample_list = {s for (s, path) in s_to_vdjca.items() if path in glob.glob("results/mixcr/top_func_seq/*.vdj.fa")}
 
 sample_list = sample_list | set(samples_of_int["sample"][:300])
 

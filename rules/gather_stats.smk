@@ -1,17 +1,17 @@
 def sample_to_clones():
-  return {"data/mixcr/clone_summary/{0}_clone_summary.txt".format(s) : s for s in sample_list}
+  return {os.path.abspath("data/mixcr/clone_summary/{0}_clone_summary.txt".format(s)) : s for s in sample_list}
 def sample_to_read_counts():
-  return {"data/read_counts/{0}.txt".format(s) : s for s in sample_list}
+  return {os.path.abspath("data/read_counts/{0}.txt".format(s)) : s for s in sample_list}
 
 def sample_to_igblast():
-  return {"results/igblast/{0}_igblast_output.txt".format(s) : s for s in sample_list}
+  return {os.path.abspath("results/igblast/{0}_igblast_output.txt".format(s)) : s for s in sample_list}
 
 def sample_to_igblast():
-  return {s :"results/igblast/{0}_igblast_output.txt".format(s) for s in sample_list}
+  return {s : os.path.abspath("results/igblast/{0}_igblast_output.txt".format(s)) for s in sample_list}
 
 rule gather_igblast:
   input:
-    expand("results/igblast/{sample}_igblast_output.txt", sample = sample_list)
+    expand(os.path.abspath("results/igblast/{sample}_igblast_output.txt"), sample = sample_list)
   output:
     config["igblast_file"]
   resources:

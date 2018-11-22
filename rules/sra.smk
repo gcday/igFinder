@@ -8,15 +8,15 @@ rule download:
         fq2_path = os.path.abspath("data/temp/fastq/{sample}_2.fastq"),
         log_path = os.path.abspath("logs/download/{sample}.log")
     output:
-        fastq1=temp("data/temp/fastq/{sample}_1.fastq"),
-        fastq2=temp("data/temp/fastq/{sample}_2.fastq"),
+        fastq1=temp(os.path.abspath("data/temp/fastq/{sample}_1.fastq")),
+        fastq2=temp(os.path.abspath("data/temp/fastq/{sample}_2.fastq")),
         # bam_file="data/bam/{sample}.bam"
     log:
-        "logs/download/{sample}.log"
+        os.path.abspath("logs/download/{sample}.log")
     resources:
         mem_mb=24000
     # group: "sra"
-    threads: 8
+    threads: 16
     shell:
         "cd {params.sra_dir}; fasterq-dump -m 8000MB -p {params.srr} 1>{params.log_path} 2>&1 && "
         "mv {params.srr}_1.fastq {params.fq1_path} && mv {params.srr}_2.fastq {params.fq2_path} "
