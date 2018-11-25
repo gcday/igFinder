@@ -14,6 +14,8 @@ rule gather_igblast:
     expand(os.path.abspath("results/igblast/{sample}_igblast_output.txt"), sample = sample_list)
   output:
     config["igblast_file"]
+  log:
+    os.path.abspath("logs/gather_stats/gather_igblast.log")
   resources:
     mem_mb=24000
   run:
@@ -42,6 +44,8 @@ rule gather_read_counts:
     "read_counts.tsv"
   resources:
     mem_mb=24000
+  log:
+    os.path.abspath("logs/gather_stats/gather_read_counts.log")
   run:
     files = sample_to_read_counts()
     with open(output[0], "w+") as summary:
@@ -63,6 +67,8 @@ rule gather_output:
     config["clones_file"]
   resources:
     mem_mb=24000
+  log:
+    os.path.abspath("logs/gather_stats/gather_output.log")
   run:
     files = sample_to_clones()
     with open(output[0], "w+") as summary:
@@ -86,7 +92,11 @@ rule calc_clonality:
     "read_counts.tsv"
   resources:
     mem_mb=24000
+  log:
+    os.path.abspath("logs/gather_stats/calc_clonality.log")
   output:
     config["stats_file"]    
   script:
     "../scripts/calc_clonality.R"
+
+localrules: calc_clonality, gather_output, gather_read_counts, gather_igblast

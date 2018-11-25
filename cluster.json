@@ -2,7 +2,7 @@
     "__default__" :
     {
         "account" : "gday",
-        "time" : "1:28:00",
+        "time" : "10:00:00",
         "c" : "{threads}",
         "partition" : "normal",
         "mem" : "{resources.mem_mb}",

@@ -30,21 +30,24 @@ sra_table = sra_table.query('Assay_Type == "RNA-Seq"')
 # include: "rules/samtools_filtering.smk"
 
 samples_of_interest = []
-for sample in samples["sample"]:
-    if (len(sra_table[sra_table['Sample_Name'].str.contains(str(sample))]) >= 1):
-      samples_of_interest += [sample]
-print(len(samples_of_interest))
+samples_of_interest = [sample for sample in samples["sample"] if (len(sra_table[sra_table['Sample_Name'].str.contains(str(sample))]) >= 1)]
+
+# for sample in samples["sample"]:
+#     if (len(sra_table[sra_table['Sample_Name'].str.contains(str(sample))]) >= 1):
+#       samples_of_interest += [sample]
+# print(len(samples_of_interest))
 samples_of_int = samples[[sample in samples_of_interest for sample in samples["sample"]]]
 
 # s_to_vdjca = {s : "data/mixcr/aligned/{}.vdjca".format(s) for s in samples_of_int["sample"]}
 # sample_list = {s for (s, path) in s_to_vdjca.items() if path in glob.glob("data/mixcr/aligned/*.vdjca")}
-s_to_clna = {s : "data/mixcr/clones/{}.clna".format(s) for s in samples_of_int["sample"]}
-sample_list = {s for (s, path) in s_to_clna.items() if path in glob.glob("data/mixcr/clones/*.clna")}
+# s_to_clna = {s : "data/mixcr/clones/{}.clna".format(s) for s in samples_of_int["sample"]}
+# sample_list = {s for (s, path) in s_to_clna.items() if path in glob.glob("data/mixcr/clones/*.clna")}
 # s_to_vdjca = {s : "results/mixcr/top_func_seq/{}.vdj.fa".format(s) for s in samples_of_int["sample"]}
 
 # sample_list = {s for (s, path) in s_to_vdjca.items() if path in glob.glob("results/mixcr/top_func_seq/*.vdj.fa")}
 
-sample_list = sample_list | set(samples_of_int["sample"][:300])
+# sample_list = sample_list | set(samples_of_int["sample"][:400])
+sample_list = samples_of_int["sample"]
 
 print(len(sample_list))
 samples_of_int = samples[[sample in sample_list for sample in samples["sample"]]]
@@ -52,8 +55,8 @@ samples_of_int = samples[[sample in sample_list for sample in samples["sample"]]
 # samples_of_int = samples
 # finished = "results/igblast/{sample}_igblast_output.txt"
 
-include: "rules/mixcr.smk"
 include: "rules/sra.smk"
+include: "rules/mixcr.smk"
 include: "rules/gather_stats.smk"
 
 rule def_all:

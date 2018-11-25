@@ -9,10 +9,12 @@ source activate snakemake
 #--use-singularity --singularity-args "-B /farmshare:/farmshare" 
 srun snakemake  \
 --use-singularity --singularity-args "-B /farmshare:/farmshare" \
---latency-wait 100 -k  --printshellcmds -j 40 --rerun-incomplete --use-conda \
+--latency-wait 100 -k  --printshellcmds -j 50 --rerun-incomplete --use-conda --restart-times 1 \
 --cluster-config cluster.json  --cluster \
-"sbatch --mem {cluster.mem} -c {cluster.c} --job-name {cluster.job-name} -t {cluster.time} --output .snakemake/slurm-%j.out --error .snakemake/slurm-%j.out" \
+"sbatch --mem {cluster.mem} -c {cluster.c} --job-name {cluster.job-name} -t {cluster.time} --output {cluster.output} --error {cluster.error}" \
 "$@"
+
+# "sbatch --mem {cluster.mem} -c {cluster.c} --job-name {cluster.job-name} -t {cluster.time} --output .snakemake/slurm-%j.out --error .snakemake/slurm-%j.out" \
 
 # "sbatch  --job-name {cluster.job-name} --mem-per-cpu {cluster.mem-per-cpu} -c {cluster.c}  -t {cluster.time} "
 

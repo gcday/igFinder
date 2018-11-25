@@ -4,8 +4,6 @@ rule download:
     params:
         srr=get_srr,
         sra_dir = config["sra_dir"],
-        fq1_path = os.path.abspath("data/temp/fastq/{sample}_1.fastq"),
-        fq2_path = os.path.abspath("data/temp/fastq/{sample}_2.fastq"),
         log_path = os.path.abspath("logs/download/{sample}.log")
     output:
         fastq1=temp(os.path.abspath("data/temp/fastq/{sample}_1.fastq")),
@@ -14,9 +12,14 @@ rule download:
     log:
         os.path.abspath("logs/download/{sample}.log")
     resources:
-        mem_mb=24000
+        mem_mb=16000
     # group: "sra"
-    threads: 16
+    threads: 12
     shell:
-        "cd {params.sra_dir}; fasterq-dump -m 8000MB -p {params.srr} 1>{params.log_path} 2>&1 && "
-        "mv {params.srr}_1.fastq {params.fq1_path} && mv {params.srr}_2.fastq {params.fq2_path} "
+        "cd {params.sra_dir}; fasterq-dump -f -m 8000MB -p {params.srr} 1>{log} 2>&1\n"
+        "if [[ $(stat -c%s {params.srr}_1.fastq) -eq $(stat -c%s {params.srr}_2.fastq) ]]; then \n"
+        "   mv {params.srr}_1.fastq {output.fastq1} && mv {params.srr}_2.fastq {output.fastq2} \n"
+        "else \n"
+        "   echo \"Error in fasterq-dump download, please try again.\" >> {log}\n"
+        "   exit 1\n"
+        "fi\n"
