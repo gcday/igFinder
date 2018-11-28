@@ -1,6 +1,7 @@
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
 # samples: 20180831_lambda_kappa.samples.tsv
-samples: "/farmshare/user_data/gday/mayo/data/CoMMpass/CoMMpass_clin_info.csv"
+# samples: "/farmshare/user_data/gday/mayo/data/CoMMpass/CoMMpass_clin_info.csv"
+samples: "CoMMpass_clin_RNAseq_avail.csv"
 
 ig_bed: "/farmshare/user_data/gday/mayo/data/reference/ig_large_regions.bed"
 # ig_bed: Ig_exons.sorted.extended300.merged.bed

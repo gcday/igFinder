@@ -11,10 +11,10 @@ rule mixcr_align:
   log:
     os.path.abspath("logs/mixcr_align/{sample}.log")
   resources:
-    mem_mb=24000
+    mem_mb=16000
   output:
     os.path.abspath("data/mixcr/aligned/{sample}.vdjca")
-  threads: 24
+  threads: 8
   params:
     tgt=get_align_target
   # group: "align"
@@ -76,7 +76,7 @@ rule sig_assemble:
   log:
     os.path.abspath("logs/mixcr_export_sig_clones/{sample}.log")
   # group: "igFinder"
-  threads: 8
+  threads: 4
   script:
     "../scripts/rev_assemble_clones.py"
 

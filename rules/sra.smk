@@ -14,9 +14,9 @@ rule download:
     resources:
         mem_mb=16000
     # group: "sra"
-    threads: 12
+    threads: 6
     shell:
-        "cd {params.sra_dir}; fasterq-dump -f -m 8000MB -p {params.srr} 1>{log} 2>&1\n"
+        "cd {params.sra_dir}; fasterq-dump -f -m 12000MB -p {params.srr} 1>{log} 2>&1\n"
         "if [[ $(stat -c%s {params.srr}_1.fastq) -eq $(stat -c%s {params.srr}_2.fastq) ]]; then \n"
         "   mv {params.srr}_1.fastq {output.fastq1} && mv {params.srr}_2.fastq {output.fastq2} \n"
         "else \n"
