@@ -1,7 +1,7 @@
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
 # samples: 20180831_lambda_kappa.samples.tsv
 # samples: "/farmshare/user_data/gday/mayo/data/CoMMpass/CoMMpass_clin_info.csv"
-samples: "CoMMpass_clin_RNAseq_avail.csv"
+samples: "CoMMpass_clin_WXS_avail.csv"
 
 ig_bed: "/farmshare/user_data/gday/mayo/data/reference/ig_large_regions.bed"
 # ig_bed: Ig_exons.sorted.extended300.merged.bed
@@ -20,4 +20,4 @@ assembly:
 sra_dir: "/farmshare/user_data/gday/mayo/data/CoMMpass-sra/"
 sra_table: "/farmshare/user_data/gday/mayo/data/CoMMpass/20181105_SraRunTable.txt"
 
-genomic_source: False
+genomic_source: True

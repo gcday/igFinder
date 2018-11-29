@@ -14,7 +14,7 @@ rule mixcr_align:
     mem_mb=16000
   output:
     os.path.abspath("data/mixcr/aligned/{sample}.vdjca")
-  threads: 8
+  threads: 24
   params:
     tgt=get_align_target
   # group: "align"
@@ -38,7 +38,7 @@ rule mixcr_assemble:
   log:
     os.path.abspath("logs/mixcr_assemble/{sample}.log")
   # group: "igFinder"
-  threads: 16
+  threads: 8
   shell: 
     "mixcr -Xmx{params.Xmx}m assemble -a -f -t {threads} {input} {output.clones} 1>{log} 2>&1"
 

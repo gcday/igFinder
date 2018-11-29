@@ -26,7 +26,8 @@ config["igblast_file"] = "{}_igblast.tsv".format(samples_root)
 # s_to_vdjca = {s : "results/mixcr/assembled/{}.vdj.fa".format(s) for s in samples["sample"]}
 
 # sample_list = {s for (s, path) in s_to_vdjca.items() if path in glob.glob("results/mixcr/assembled/*.vdj.fa")}
-# samples = samples[[sample in sample_list for sample in samples["sample"]]]
+sample_list = samples["sample"][:50]
+samples = samples[[sample in sample_list for sample in samples["sample"]]]
 
 sample_list = samples["sample"]
 # print(len(sample_list))
